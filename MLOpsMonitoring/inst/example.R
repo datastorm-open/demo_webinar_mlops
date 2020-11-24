@@ -1,6 +1,8 @@
 library(lubridate)
 library(MLOpsMonitoring)
 
+source('MLOpsMonitoring/R/dataset.R')
+
 data <- import_dataset("/home/ngirard/Webinaire_MLOPS/data/uk-retailer-ii.xlsx")
 
 dim(data)
