@@ -60,5 +60,6 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
   uk_retailer_2_p1 = read.xlsx(path, sheet = 1)
   uk_retailer_2_p2 = read.xlsx(path, sheet = 2)
   uk_retailer_2 = as.data.table(rbind(uk_retailer_2_p1, uk_retailer_2_p2))
+  uk_retailer_2 = as.Date(uk_retailer_2$InvoiceDate, origin = "1900-01-01")
   return(uk_retailer_2)
 }
