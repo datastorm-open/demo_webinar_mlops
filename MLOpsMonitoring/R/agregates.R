@@ -17,8 +17,8 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
 }
 
 
-create_subset_data <- function(data, end_rep="2011-10-01", window_months = 3){
-  end_agg <- as.Date(end_rep)
+create_subset_data <- function(data, start_rep="2011-10-01", window_months = 3){
+  end_agg <- as.Date(start_rep)
   lubridate::day(end_agg) <- 1
   start_agg <- end_agg %m-% months(window_months)
   sub_data_agg <- data[InvoiceDate >= start_agg & InvoiceDate < end_agg,]
@@ -27,8 +27,8 @@ create_subset_data <- function(data, end_rep="2011-10-01", window_months = 3){
 
 
 # Exemple : Calcul le prix du panier moyen sur les 3 derniers mois à partir de end_rep
-create_agg_prix_qty <- function(data, end_rep="2011-10-01", window_months = 3){
-  sub_data_agg <- create_subset_data(data, end_rep, window_months)
+create_agg_prix_qty <- function(data, start_rep="2011-10-01", window_months = 3){
+  sub_data_agg <- create_subset_data(data, start_rep, window_months)
   basket_customer <- sub_data_agg[Quantity > 0, .(BASKET_PRICE = sum(Quantity*Price)), .(Customer.ID, Invoice)]
   agg_panier <- basket_customer[, .(BASKET_PRICE_MEAN = mean(BASKET_PRICE), 
                                     BASKET_PRICE_MIN = min(BASKET_PRICE),
@@ -59,7 +59,17 @@ create_agg_prix_qty <- function(data, end_rep="2011-10-01", window_months = 3){
   return(all_agg)
 }
 
-agg <- create_var_reponse(data, "2011-10-01", "2011-10-31")
-agg <- merge(agg, create_agg_prix_qty(data), by = "Customer.ID")
 
+START_REP <- "2011-12-01"
+END_REP <- "2011-12-31"
+WINDOWS_MONTH <- c(3, 6, 12)
+
+agg <- create_var_reponse(data, START_REP, END_REP)
+
+for(windows in WINDOWS_MONTH){
+  agg <- merge(agg, create_agg_prix_qty(data, start_rep = START_REP, window_months = windows), by = "Customer.ID")
+}
+
+dim(agg)
+colnames(agg)
 
