@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 .Rproj
+.ipynb_checkpoints/
+mlops-webinar.Rproj
+MLOpsMonitoring/MLOpsMonitoring.Rproj
