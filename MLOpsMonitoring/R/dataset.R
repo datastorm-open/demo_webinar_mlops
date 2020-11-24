@@ -60,6 +60,8 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
   uk_retailer_2_p1 = read.xlsx(path, sheet = 1)
   uk_retailer_2_p2 = read.xlsx(path, sheet = 2)
   uk_retailer_2 = as.data.table(rbind(uk_retailer_2_p1, uk_retailer_2_p2))
-  uk_retailer_2 = as.Date(uk_retailer_2$InvoiceDate, origin = "1900-01-01")
+  uk_retailer_2$InvoiceDate = as.Date(uk_retailer_2$InvoiceDate, origin = "1900-01-01")
+  uk_retailer_2 <- uk_retailer_2[!is.na(Customer.ID)]
+  uk_retailer_2$Invoice = as.character(uk_retailer_2$Invoice)
   return(uk_retailer_2)
 }
