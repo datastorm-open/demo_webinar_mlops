@@ -70,9 +70,9 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
   customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
   df_var_reponse <- data[, .(Customer.ID = unique(Customer.ID), VAR_REP = 0)]
   df_var_reponse[Customer.ID %in% customer_id_achat, VAR_REP := 1]
-  if((year(start_rep) == year(end_rep)) & (month(start_rep) == month(end_rep))){
-    df_var_reponse[, MONTH := month(start_rep)]
-  }
+  # if((year(start_rep) == year(end_rep)) & (month(start_rep) == month(end_rep))){
+  #   df_var_reponse[, MONTH := month(start_rep)]
+  # }
   return(df_var_reponse)
 }
 
@@ -167,12 +167,12 @@ create_agg_freq_cncl <- function(dt){
 create_features <- function(sub_data_agg, all_customers, windows){
   agg_pt1 = create_agg_prix_qty(sub_data_agg, all_customers)
   colnames(agg_pt1)[-1] <- paste0(colnames(agg_pt1)[-1], "_", windows, "M")
-  agg <- merge(agg, agg_pt1, by = "Customer.ID")
+  # agg <- merge(all_customers, agg_pt1, by = "Customer.ID", all.x=TRUE)
   
   agg_pt2 = sub_data_agg[, create_agg_freq_cncl(.SD), by="Customer.ID"]
   colnames(agg_pt2)[-1] <- paste0(colnames(agg_pt2)[-1], "_", windows, "M")
   
-  agg <- merge(agg, agg_pt2, by = "Customer.ID", all.x=TRUE)
+  agg <- merge(agg_pt1, agg_pt2, by = "Customer.ID", all.x=TRUE)
   agg[is.na(agg)] <- 0
   return(agg)
 }
