@@ -5,9 +5,10 @@ library(xgboost)
 
 source("MLOpsMonitoring/R/dataset.R")
 
-
-train <- read_csv("../input/train.csv")
-test<-read_csv("../input/test.csv")
+START_REP <- "2011-12-01"
+END_REP <- "2011-12-31"
+WINDOWS_MONTH <- c(3, 6, 12)
+train <- create_features_on_period(START_REP, END_REP, WINDOWS_MONTH)
 
 smp_size <- floor(0.75 * nrow(mtcars))
 

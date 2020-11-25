@@ -135,41 +135,57 @@ create_agg_prix_qty <- function(sub_data_agg, all_customers){
 #'
 create_agg_freq_cncl <- function(dt){
    
-  # # subset on product actually bought and products cancelled
+  # subset on product actually bought and products cancelled
   is_C = function (x) startsWith(x,"C")
-  bought = dt[which(!is_C(dt$Invoice))]
-  cancelled = dt[which(is_C(dt$Invoice))]
+  bought = dt[Quantity>0]
+  cancelled = dt[Quantity<=0]
 
   bght_prices_qtty=bought$Price*bought$Quantity
   cncl_prices_qtty=cancelled$Price*cancelled$Quantity
   
-  out = list("FREQ_ACHAT" = 1/length(unique(as.character(bought$InvoiceDate))),
-             "NB_SKU" = length(unique(bought$StockCode)),
-             "ITEM_PRICE_MAX" = ifelse(nrow(bought)>0, max(bght_prices_qtty), 0),
-             "EXPENSES" = sum(bght_prices_qtty))
-  
-  ## Achats annulés
-  out$NB_CANCELLED = nrow(cancelled)
-  out$EXPENSES_CANCELLED = -sum(cncl_prices_qtty)
-  out$PCT_EXP_CANCELLED = out$EXPENSES_CANCELLED / out$EXPENSES
-  
-  ## Achats fréquents
-  NB_FREQ = bought[,.(NB_CMD=length(unique(as.character(InvoiceDate)))),by=StockCode]
-  bought = merge(bought, NB_FREQ, by="StockCode")
-  out$NB_CMD_MOST_FREQ = ifelse(nrow(bought)>0, as.double(max(NB_FREQ$NB_CMD)), 0)
-  out$NB_SKU_FREQ = nrow(NB_FREQ[NB_CMD>1])
-  out$PCT_SKU_FREQ = out$NB_SKU_FREQ/out$NB_SKU
-  out$EXPENSES_FREQ = bought[NB_CMD>1, sum(Price*Quantity)]
-  out$PCT_EXP_FREQ = out$EXPENSES_FREQ / out$EXPENSES
-  return(out)
+  if(nrow(bought)>0){
+    out = list("FREQ_ACHAT" = 1/length(unique(as.character(bought$InvoiceDate))),
+               "NB_SKU" = length(unique(bought$StockCode)),
+               "ITEM_PRICE_MAX" = max(bght_prices_qtty),
+               "EXPENSES" = sum(bght_prices_qtty))
+    
+    ## Achats annulés
+    out$NB_CANCELLED = nrow(cancelled)
+    out$EXPENSES_CANCELLED = -sum(cncl_prices_qtty)
+    out$PCT_EXP_CANCELLED = out$EXPENSES_CANCELLED / out$EXPENSES
+    
+    ## Achats fréquents
+    NB_FREQ = bought[,.(NB_CMD=length(unique(as.character(InvoiceDate)))),by=StockCode]
+    bought = merge(bought, NB_FREQ, by="StockCode")
+    out$NB_CMD_MOST_FREQ = as.double(max(NB_FREQ$NB_CMD))
+    out$NB_SKU_FREQ = nrow(NB_FREQ[NB_CMD>1])
+    out$PCT_SKU_FREQ = out$NB_SKU_FREQ/out$NB_SKU
+    out$EXPENSES_FREQ = bought[NB_CMD>1, sum(Price*Quantity)]
+    out$PCT_EXP_FREQ = out$EXPENSES_FREQ / out$EXPENSES
+   
+  } else {
+    out = list("FREQ_ACHAT" = 0,
+               "NB_SKU" = 0,
+               "ITEM_PRICE_MAX" = 0,
+               "EXPENSES" = 0,
+               "NB_CANCELLED" = 0,
+               "EXPENSES_CANCELLED" = 0,
+               "PCT_EXP_CANCELLED" = 0,
+               "NB_CMD_MOST_FREQ" = 0,
+               "NB_SKU_FREQ" = 0,
+               "PCT_SKU_FREQ" = 0,
+               "EXPENSES_FREQ" = 0,
+               "PCT_EXP_FREQ" = 0)
+  }
+  return(lapply(out, as.numeric))
 }
 
-create_features <- function(data, windows_month=c(3, 6, 12)){
+create_features_on_period <- function(data, start_rep, end_rep, windows_month=c(3, 6, 12)){
   
-  agg <- create_var_reponse(data, START_REP, END_REP)
+  agg <- create_var_reponse(data, start_rep, end_rep)
   for(windows in windows_month){
     all_customers = data[, .(Customer.ID = unique(Customer.ID))]
-    sub_data_agg <- create_subset_data(data, START_REP, windows)
+    sub_data_agg <- create_subset_data(data, start_rep, windows)
     
     agg_pt1 = create_agg_prix_qty(sub_data_agg, all_customers)
     colnames(agg_pt1)[-1] <- paste0(colnames(agg_pt1)[-1], "_", windows, "M")
@@ -186,4 +202,17 @@ create_features <- function(data, windows_month=c(3, 6, 12)){
 }
 
 
-
+create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01"), by="month"){
+  agg <- NULL
+  start <- seq.Date(from = from, to = to, by)
+  end <- seq.Date(from = from+month(1), to = to+month(1), by)
+  for(i in 1:length(start)){
+    append <- create_features_on_period(data, start[i], end[i])
+    if(!is.null(agg)){
+      agg = rbind(agg,append)
+    } else {
+      agg = append
+    }  
+  }
+  return(agg)
+}
