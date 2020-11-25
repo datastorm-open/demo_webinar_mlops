@@ -14,5 +14,5 @@ agg_period <- create_features_on_period(data, START_REP, END_REP, WINDOWS_MONTH)
 
 ### CONCATENATE SEVERAL TARGET PERIODS
 agg <- create_features(from = as.Date("2010/03/01"), to = as.Date("2011/12/01"), by = "month")
-write.csv(agg, "/home/mmasson/data/mlops-wbr/features_several_y_period.csv.gz", na = "", row.names = FALSE)
-agg <- read.csv("/home/mmasson/data/mlops-wbr/features_several_y_period.csv.gz", na = "", row.names = FALSE)
+write.csv(agg, "/home/mmasson/data/mlops-wbr/features_several_y_period.csv", na = "", row.names = FALSE)
+agg <- read.csv("/home/mmasson/data/mlops-wbr/features_several_y_period.csv", na = "", row.names = FALSE)
