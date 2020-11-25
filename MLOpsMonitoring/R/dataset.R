@@ -300,3 +300,40 @@ create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01")
   return(agg)
 }
 
+
+
+keywords = c("CHRISTMAS", "UMBRELLA", "CARD", "MUG", "TEA", "BOTTLE", "BAG", 
+             "CANDLE", "DOILY", "DOILIES", "MIROR", "WALL ART", "TISSUES", "BOWL", "LIGHT", "BRACELET",
+             "T-LIGHT", "BOX", "GLASS", "RUBBER", "PENCIL", "PEN", "DECORATION", "DRESS", "T-SHIRT", "MAGNET", "FRAME",
+             "ORGANISER", "ERASER", "NECKL", "CLOCK", "LAMP", "STICKER", "COVER")
+
+
+#' Compute features on a rolling windows
+#'
+#' @param labels : \code{characters}. Characters to look patterns into.
+#' @param patterns : \code{characters} pretty obvious
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' sample(unique(data$Description), 5000)
+#' l = count_keywords(unique(data$Description))
+#'
+count_keywords <- function(labels, patterns=keywords){
+  find = function(label) as.numeric(lapply(patterns, function(pattern, x) {grepl(pattern, x)}, label))
+  dt = lapply(labels, find)
+  sparse_dt = t(as.data.table(dt))
+  colnames(sparse_dt) = patterns
+  rownames(sparse_dt) = labels
+  return(list(
+    "dt" = sparse_dt,
+    "summary" = sort(colMeans(sparse_dt))*100, # Mot-clé les plus fréquents
+    "coverage" = mean(rowSums(sparse_dt)>0)*100 # Pct de libellés couverts
+  ))
+}
+
