@@ -315,7 +315,7 @@ keywords = c("CHRISTMAS", "UMBRELLA", "CARD", "MUG", "TEA", "BOTTLE", "BAG",
 #' 
 #' @return a data.table object
 #'
-#' @import data.table
+#' @import a list of (data.table, a coverage indicator, summary of keywords)
 #' @export
 #'
 #'
