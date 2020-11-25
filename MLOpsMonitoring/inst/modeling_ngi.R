@@ -1,4 +1,3 @@
-# source("MLOpsMonitoring/R/agregates.R")
 source("MLOpsMonitoring/R/dataset.R")
 source("MLOpsMonitoring/R/drift_score.R")
 
@@ -85,3 +84,9 @@ plot(varImp(res_mai$rf), top=10)
 res_mai12 <- train_rf(agg_target1_windows12)
 res_mai12$auc
 plot(varImp(res_mai$rf), top=10)
+
+
+
+# Faire evoluer un modele dans le temps : prev à M+1, M+2 etc
+
+

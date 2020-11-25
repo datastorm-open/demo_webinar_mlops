@@ -86,9 +86,8 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
   customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
   df_var_reponse <- data[, .(Customer.ID = unique(Customer.ID), VAR_REP = 0)]
   df_var_reponse[Customer.ID %in% customer_id_achat, VAR_REP := 1]
-  # if((year(start_rep) == year(end_rep)) & (month(start_rep) == month(end_rep))){
-  #   df_var_reponse[, MONTH := month(start_rep)]
-  # }
+  df_var_reponse[, MONTH := month(start_rep)]
+  df_var_reponse[, YEAR := year(start_rep)]
   return(df_var_reponse)
 }
 
