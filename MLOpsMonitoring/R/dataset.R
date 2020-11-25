@@ -42,9 +42,10 @@ require(openxlsx)
 #'
 #' @param path : \code{character}. Path to xlsx file
 #' 
-#' @return a connection object
+#' @return a data.table object
 #'
-#' @import DBI utils
+#' @import data.table
+#' @import openxlsx
 #' @export
 #'
 #'
@@ -65,7 +66,22 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
   return(uk_retailer_2)
 }
 
-
+#' Create response variable : 0 if customer did not buy anything in targetted month, 1 if the it did.
+#'
+#' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
+#'
 create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31"){
   customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
   df_var_reponse <- data[, .(Customer.ID = unique(Customer.ID), VAR_REP = 0)]
@@ -76,7 +92,24 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
   return(df_var_reponse)
 }
 
-
+#' Subset dataset from a specified date for as long as specified (in months).
+#'
+#' @param data : \code{data.talbe}. Complete dataset to extract period from.
+#' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param window_months : \code{integer}. Size of period window.
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @import lubridate
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
+#'
 create_subset_data <- function(data, start_rep="2011-10-01", window_months = 3){
   end_agg <- as.Date(start_rep)
   lubridate::day(end_agg) <- 1
@@ -86,7 +119,23 @@ create_subset_data <- function(data, start_rep="2011-10-01", window_months = 3){
 }
 
 
-# Exemple : Calcul le prix du panier moyen sur les 3 derniers mois à partir de end_rep
+
+#' First part of features computing. Calcul le prix du panier moyen sur les 3 derniers mois à partir de end_rep (TO TRANSLATE)
+#'
+#' @param sub_data_agg : \code{data.table}. A subset of the complete dataset(Use create_subset_data)
+#' @param all_customers : \code{data.table}. List of all the considered customers.
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
+#'
 create_agg_prix_qty <- function(sub_data_agg, all_customers){
 
   basket_customer <- sub_data_agg[Quantity > 0, .(BASKET_PRICE = sum(Quantity*Price)), .(Customer.ID, Invoice)]
@@ -118,63 +167,137 @@ create_agg_prix_qty <- function(sub_data_agg, all_customers){
 }
 
 
-#' Import dataset
+#' Second part of features computing.
 #'
-#' @param path : \code{character}. Path to xlsx file
+#' @param dt : \code{data.table}. A data.table obtained from a groupby on customers
 #' 
-#' @return a connection object
+#' @return a data.table object
 #'
+#' @import data.table
 #' @export
 #'
 #'
 #' @examples 
 #' \dontrun{
-#' dt = import_dataset()
-#' compute_features(dt[Customer.ID==13085])
-#' compute_features(dt[Customer.ID==15098])
+#' TODO
 #'
 create_agg_freq_cncl <- function(dt){
    
-  # # subset on product actually bought and products cancelled
+  # subset on product actually bought and products cancelled
   is_C = function (x) startsWith(x,"C")
-  bought = dt[which(!is_C(dt$Invoice))]
-  cancelled = dt[which(is_C(dt$Invoice))]
+  bought = dt[Quantity>0]
+  cancelled = dt[Quantity<=0]
 
   bght_prices_qtty=bought$Price*bought$Quantity
   cncl_prices_qtty=cancelled$Price*cancelled$Quantity
   
-  out = list("FREQ_ACHAT" = 1/length(unique(as.character(bought$InvoiceDate))),
-             "NB_SKU" = length(unique(bought$StockCode)),
-             "ITEM_PRICE_MAX" = ifelse(nrow(bought)>0, max(bght_prices_qtty), 0),
-             "EXPENSES" = sum(bght_prices_qtty))
-  
-  ## Achats annulés
-  out$NB_CANCELLED = nrow(cancelled)
-  out$EXPENSES_CANCELLED = -sum(cncl_prices_qtty)
-  out$PCT_EXP_CANCELLED = out$EXPENSES_CANCELLED / out$EXPENSES
-  
-  ## Achats fréquents
-  NB_FREQ = bought[,.(NB_CMD=length(unique(as.character(InvoiceDate)))),by=StockCode]
-  bought = merge(bought, NB_FREQ, by="StockCode")
-  out$NB_CMD_MOST_FREQ = ifelse(nrow(bought)>0, as.double(max(NB_FREQ$NB_CMD)), 0)
-  out$NB_SKU_FREQ = nrow(NB_FREQ[NB_CMD>1])
-  out$PCT_SKU_FREQ = out$NB_SKU_FREQ/out$NB_SKU
-  out$EXPENSES_FREQ = bought[NB_CMD>1, sum(Price*Quantity)]
-  out$PCT_EXP_FREQ = out$EXPENSES_FREQ / out$EXPENSES
-  return(out)
+  if(nrow(bought)>0){
+    out = list("FREQ_ACHAT" = 1/length(unique(as.character(bought$InvoiceDate))),
+               "NB_SKU" = length(unique(bought$StockCode)),
+               "ITEM_PRICE_MAX" = max(bght_prices_qtty),
+               "EXPENSES" = sum(bght_prices_qtty))
+    
+    ## Achats annulés
+    out$NB_CANCELLED = nrow(cancelled)
+    out$EXPENSES_CANCELLED = -sum(cncl_prices_qtty)
+    out$PCT_EXP_CANCELLED = out$EXPENSES_CANCELLED / out$EXPENSES
+    
+    ## Achats fréquents
+    NB_FREQ = bought[,.(NB_CMD=length(unique(as.character(InvoiceDate)))),by=StockCode]
+    bought = merge(bought, NB_FREQ, by="StockCode")
+    out$NB_CMD_MOST_FREQ = as.double(max(NB_FREQ$NB_CMD))
+    out$NB_SKU_FREQ = nrow(NB_FREQ[NB_CMD>1])
+    out$PCT_SKU_FREQ = out$NB_SKU_FREQ/out$NB_SKU
+    out$EXPENSES_FREQ = bought[NB_CMD>1, sum(Price*Quantity)]
+    out$PCT_EXP_FREQ = out$EXPENSES_FREQ / out$EXPENSES
+   
+  } else {
+    out = list("FREQ_ACHAT" = 0,
+               "NB_SKU" = 0,
+               "ITEM_PRICE_MAX" = 0,
+               "EXPENSES" = 0,
+               "NB_CANCELLED" = 0,
+               "EXPENSES_CANCELLED" = 0,
+               "PCT_EXP_CANCELLED" = 0,
+               "NB_CMD_MOST_FREQ" = 0,
+               "NB_SKU_FREQ" = 0,
+               "PCT_SKU_FREQ" = 0,
+               "EXPENSES_FREQ" = 0,
+               "PCT_EXP_FREQ" = 0)
+  }
+  return(lapply(out, as.numeric))
 }
 
-create_features <- function(sub_data_agg, all_customers, windows){
-  agg_pt1 = create_agg_prix_qty(sub_data_agg, all_customers)
-  colnames(agg_pt1)[-1] <- paste0(colnames(agg_pt1)[-1], "_", windows, "M")
 
-  agg_pt2 = sub_data_agg[, create_agg_freq_cncl(.SD), by="Customer.ID"]
-  colnames(agg_pt2)[-1] <- paste0(colnames(agg_pt2)[-1], "_", windows, "M")
+#' Compute features on a specific targeted period
+#'
+#' @param data : \code{data.table}. Complete dataset.
+#' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param windows_month : \code{integers}. A vector of windows to compute features on.
+#' 
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
+create_features_on_period <- function(data, start_rep, end_rep, windows_month=c(3, 6, 12)){
   
-  agg <- merge(agg_pt1, agg_pt2, by = "Customer.ID", all.x=TRUE)
-  agg[is.na(agg)] <- 0
+  agg <- create_var_reponse(data, start_rep, end_rep)
+  for(windows in windows_month){
+    all_customers = data[, .(Customer.ID = unique(Customer.ID))]
+    sub_data_agg <- create_subset_data(data, start_rep, windows)
+    
+    agg_pt1 = create_agg_prix_qty(sub_data_agg, all_customers)
+    colnames(agg_pt1)[-1] <- paste0(colnames(agg_pt1)[-1], "_", windows, "M")
+    agg <- merge(agg, agg_pt1, by = "Customer.ID")
+    
+    agg_pt2 = sub_data_agg[, create_agg_freq_cncl(.SD), by="Customer.ID"]
+    colnames(agg_pt2)[-1] <- paste0(colnames(agg_pt2)[-1], "_", windows, "M")
+    
+    agg <- merge(agg, agg_pt2, by = "Customer.ID", all.x=TRUE)
+    agg[is.na(agg)] <- 0
+  }
+
   return(agg)
 }
 
-
+#' Compute features on a rolling windows
+#'
+#' @param data : \code{data.table}. Complete dataset.
+#' @param from : \code{Date}. starting date. Required
+#' @param to : \code{Date}. end date. Required
+#' @param by : \code{character}. increment of the sequence of Dates
+#' 
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
+create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01"), by="month"){
+  agg <- NULL
+  start <- seq.Date(from = from, to = to, by)
+  end <- seq.Date(from = from+month(1), to = to+month(1), by)
+  for(i in 1:length(start)){
+    append <- create_features_on_period(data, start[i], end[i])
+    if(!is.null(agg)){
+      agg = rbind(agg,append)
+    } else {
+      agg = append
+    }  
+  }
+  return(agg)
+}
 
