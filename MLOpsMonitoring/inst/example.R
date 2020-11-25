@@ -28,13 +28,12 @@ dim(data)
 # Target à 3 mois
 create_complete_dataset <- function(data, start_rep, end_rep, windows_vect){
   agg <- create_var_reponse(data, start_rep, end_rep)
-  print(dim(agg))
-  
+
   for(windows in windows_vect){
     all_customers <- data[, .(Customer.ID = unique(Customer.ID))]
     sub_data_agg <- create_subset_data(data, start_rep, windows)
     
-    agg <- create_features(sub_data_agg, all_customers, windows)
+    agg <- merge(agg, create_features(sub_data_agg, all_customers, windows), by="Customer.ID")
   }
   return(agg)
 }
@@ -44,7 +43,9 @@ create_complete_dataset <- function(data, start_rep, end_rep, windows_vect){
 
 
 
+agg_target1_windows3 <- create_complete_dataset(data, "2011-05-01", "2011-05-30", c(1))
 agg_target1_windows3 <- create_complete_dataset(data, "2011-05-01", "2011-05-30", c(3))
+agg_target1_windows12 <- create_complete_dataset(data, "2011-05-01", "2011-05-30", c(12))
 
 
 
