@@ -1,6 +1,3 @@
-require(data.table)
-require(openxlsx)
-
 # UNCHOSEN DATASETS 
 # 
 # # https://www.kaggle.com/carrie1/ecommerce-data/home
@@ -52,6 +49,7 @@ require(openxlsx)
 #' @examples 
 #' \dontrun{
 #' dt = import_dataset()
+#' }
 #'
 #'
 import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xlsx'){
@@ -80,7 +78,7 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
 #' @examples 
 #' \dontrun{
 #' TODO
-#'
+#' }
 #'
 create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31"){
   customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
@@ -107,7 +105,7 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
 #' @examples 
 #' \dontrun{
 #' TODO
-#'
+#' }
 #'
 create_subset_data <- function(data, to="2011-10-01", window_months = 3){
   end_agg <- as.Date(to)
@@ -133,7 +131,7 @@ create_subset_data <- function(data, to="2011-10-01", window_months = 3){
 #' @examples 
 #' \dontrun{
 #' TODO
-#'
+#' }
 #'
 create_agg_prix_qty <- function(sub_data_agg, all_customers){
 
@@ -179,6 +177,7 @@ create_agg_prix_qty <- function(sub_data_agg, all_customers){
 #' @examples 
 #' \dontrun{
 #' TODO
+#' }
 #'
 create_agg_freq_cncl <- function(dt){
    
@@ -248,6 +247,7 @@ create_agg_freq_cncl <- function(dt){
 #' \dontrun{
 #' start_rep = "2011-05-01"
 #' TODO
+#' }
 #'
 create_features_on_period <- function(data, start_rep, end_rep, windows=c("M-1", "M-2", "M-3"), kind="lag"){
   
@@ -302,6 +302,7 @@ create_features_on_period <- function(data, start_rep, end_rep, windows=c("M-1",
 #' @examples 
 #' \dontrun{
 #' TODO
+#' }
 #'
 create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01"), by="month", windows=c("M-1", "M-2", "M-3"), kind="lag"){
   agg <- NULL
@@ -331,9 +332,9 @@ keywords = c("CHRISTMAS", "UMBRELLA", "CARD", "MUG", "TEA", "BOTTLE", "BAG",
 #' @param labels : \code{characters}. Characters to look patterns into.
 #' @param patterns : \code{characters} pretty obvious
 #' 
-#' @return a data.table object
+#' @return a list of (data.table, a coverage indicator, summary of keywords)
 #'
-#' @import a list of (data.table, a coverage indicator, summary of keywords)
+#' @import data.table
 #' @export
 #'
 #'
@@ -341,6 +342,7 @@ keywords = c("CHRISTMAS", "UMBRELLA", "CARD", "MUG", "TEA", "BOTTLE", "BAG",
 #' \dontrun{
 #' sample(unique(data$Description), 5000)
 #' l = count_keywords(unique(data$Description))
+#' }
 #'
 count_keywords <- function(labels, patterns=keywords){
   find = function(label) as.numeric(lapply(patterns, function(pattern, x) {grepl(pattern, x)}, label))

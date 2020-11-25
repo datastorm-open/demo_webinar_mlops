@@ -41,5 +41,3 @@ drift_score <- function(X_train, X_test){
   auc_drift <- auc(df_drift$Y_DRIFTSCORE, pred_drift)
   return(list(matthews=matthews_score, auc=auc_drift))
 }
-
-
