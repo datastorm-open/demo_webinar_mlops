@@ -42,9 +42,10 @@ require(openxlsx)
 #'
 #' @param path : \code{character}. Path to xlsx file
 #' 
-#' @return a connection object
+#' @return a data.table object
 #'
-#' @import DBI utils
+#' @import data.table
+#' @import openxlsx
 #' @export
 #'
 #'
@@ -65,7 +66,22 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
   return(uk_retailer_2)
 }
 
-
+#' Create response variable : 0 if customer did not buy anything in targetted month, 1 if the it did.
+#'
+#' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
+#'
 create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31"){
   customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
   df_var_reponse <- data[, .(Customer.ID = unique(Customer.ID), VAR_REP = 0)]
@@ -76,7 +92,24 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
   return(df_var_reponse)
 }
 
-
+#' Subset dataset from a specified date for as long as specified (in months).
+#'
+#' @param data : \code{data.talbe}. Complete dataset to extract period from.
+#' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param window_months : \code{integer}. Size of period window.
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @import lubridate
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
+#'
 create_subset_data <- function(data, start_rep="2011-10-01", window_months = 3){
   end_agg <- as.Date(start_rep)
   lubridate::day(end_agg) <- 1
@@ -86,7 +119,23 @@ create_subset_data <- function(data, start_rep="2011-10-01", window_months = 3){
 }
 
 
-# Exemple : Calcul le prix du panier moyen sur les 3 derniers mois à partir de end_rep
+
+#' First part of features computing. Calcul le prix du panier moyen sur les 3 derniers mois à partir de end_rep (TO TRANSLATE)
+#'
+#' @param sub_data_agg : \code{data.table}. A subset of the complete dataset(Use create_subset_data)
+#' @param all_customers : \code{data.table}. List of all the considered customers.
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
+#'
 create_agg_prix_qty <- function(sub_data_agg, all_customers){
 
   basket_customer <- sub_data_agg[Quantity > 0, .(BASKET_PRICE = sum(Quantity*Price)), .(Customer.ID, Invoice)]
@@ -118,20 +167,19 @@ create_agg_prix_qty <- function(sub_data_agg, all_customers){
 }
 
 
-#' Import dataset
+#' Second part of features computing.
 #'
-#' @param path : \code{character}. Path to xlsx file
+#' @param dt : \code{data.table}. A data.table obtained from a groupby on customers
 #' 
-#' @return a connection object
+#' @return a data.table object
 #'
+#' @import data.table
 #' @export
 #'
 #'
 #' @examples 
 #' \dontrun{
-#' dt = import_dataset()
-#' compute_features(dt[Customer.ID==13085])
-#' compute_features(dt[Customer.ID==15098])
+#' TODO
 #'
 create_agg_freq_cncl <- function(dt){
    
@@ -180,6 +228,24 @@ create_agg_freq_cncl <- function(dt){
   return(lapply(out, as.numeric))
 }
 
+#' Compute features on a specific targeted period
+#'
+#' @param data : \code{data.table}. Complete dataset.
+#' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param windows_month : \code{integers}. A vector of windows to compute features on.
+#' 
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
 create_features_on_period <- function(data, start_rep, end_rep, windows_month=c(3, 6, 12)){
   
   agg <- create_var_reponse(data, start_rep, end_rep)
@@ -202,6 +268,24 @@ create_features_on_period <- function(data, start_rep, end_rep, windows_month=c(
 }
 
 
+#' Compute features on a rolling windows
+#'
+#' @param data : \code{data.table}. Complete dataset.
+#' @param from : \code{Date}. starting date. Required
+#' @param to : \code{Date}. end date. Required
+#' @param by : \code{character}. increment of the sequence of Dates
+#' 
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#'
 create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01"), by="month"){
   agg <- NULL
   start <- seq.Date(from = from, to = to, by)
