@@ -1,7 +1,3 @@
-require(data.table)
-require(openxlsx)
-require(lubridate)
-
 # UNCHOSEN DATASETS 
 # 
 # # https://www.kaggle.com/carrie1/ecommerce-data/home
@@ -53,6 +49,7 @@ require(lubridate)
 #' @examples 
 #' \dontrun{
 #' dt = import_dataset()
+#' }
 #'
 #'
 import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xlsx'){
@@ -81,7 +78,7 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
 #' @examples 
 #' \dontrun{
 #' TODO
-#'
+#' }
 #'
 create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31"){
   customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
@@ -92,10 +89,10 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
   return(df_var_reponse)
 }
 
-#' Subset dataset from a specified date for as long as specified (in months).
+#' Subset dataset from a specified date of end for as long as specified (in months).
 #'
 #' @param data : \code{data.talbe}. Complete dataset to extract period from.
-#' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param to : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
 #' @param window_months : \code{integer}. Size of period window.
 #' 
 #' @return a data.table object
@@ -108,10 +105,10 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
 #' @examples 
 #' \dontrun{
 #' TODO
+#' }
 #'
-#'
-create_subset_data <- function(data, start_rep="2011-10-01", window_months = 3){
-  end_agg <- as.Date(start_rep)
+create_subset_data <- function(data, to="2011-10-01", window_months = 3){
+  end_agg <- as.Date(to)
   lubridate::day(end_agg) <- 1
   start_agg <- end_agg %m-% months(window_months)
   sub_data_agg <- data[InvoiceDate >= start_agg & InvoiceDate < end_agg,]
@@ -134,7 +131,7 @@ create_subset_data <- function(data, start_rep="2011-10-01", window_months = 3){
 #' @examples 
 #' \dontrun{
 #' TODO
-#'
+#' }
 #'
 create_agg_prix_qty <- function(sub_data_agg, all_customers){
 
@@ -180,6 +177,7 @@ create_agg_prix_qty <- function(sub_data_agg, all_customers){
 #' @examples 
 #' \dontrun{
 #' TODO
+#' }
 #'
 create_agg_freq_cncl <- function(dt){
    
@@ -234,33 +232,52 @@ create_agg_freq_cncl <- function(dt){
 #' @param data : \code{data.table}. Complete dataset.
 #' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
 #' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
-#' @param windows_month : \code{integers}. A vector of windows to compute features on.
+#' @param windows : \code{integers}. windows=c("M-1", "M-2", "M-3") or windows=c("T-1", "T-2", "T-3")
+#' @param kind : \code{character}. One of c("lapse", "cumulative").
 #' 
 #' 
 #' @return a data.table object
 #'
 #' @import data.table
+#' @import stringr
 #' @export
 #'
 #'
 #' @examples 
 #' \dontrun{
+#' start_rep = "2011-05-01"
 #' TODO
+#' }
 #'
-create_features_on_period <- function(data, start_rep, end_rep, windows_month=c(3, 6, 12)){
+create_features_on_period <- function(data, start_rep, end_rep, windows=c("M-1", "M-2", "M-3"), kind="lag"){
   
   agg <- create_var_reponse(data, start_rep, end_rep)
-  for(windows in windows_month){
+  
+  for(wdw in windows){
+    len = unname(c("Y"=12, "S"=6, "T"=3, "M"=1)[stringr::str_split(wdw, "-")[[1]][1]])
+    n = as.numeric(stringr::str_split(wdw, "-")[[1]][2]) 
+
+    if(kind=="cumulative"){
+      latest_X = start_rep # stay unchanged <=> beginning of response period
+      length_X = len*n     # variable length : n x Y=12months S=6months T=3months M=1Month
+    }else if(kind=="lag"){
+      latest_X = as.Date(start_rep)-months(len*(n-1)) # (n-1) x Y=12months S=6months T=3months M=1Month
+      length_X = len # defined by Y/S/T/M
+    }
+    
+    # print(paste("Beg.", latest_X-months(length_X)))
+    # print(paste("End ", latest_X))
+    
     all_customers = data[, .(Customer.ID = unique(Customer.ID))]
-    sub_data_agg <- create_subset_data(data, start_rep, windows)
-    
+    sub_data_agg <- create_subset_data(data, latest_X, length_X)
+
     agg_pt1 = create_agg_prix_qty(sub_data_agg, all_customers)
-    colnames(agg_pt1)[-1] <- paste0(colnames(agg_pt1)[-1], "_", windows, "M")
+    colnames(agg_pt1)[-1] <- paste0(colnames(agg_pt1)[-1], "_", wdw)
     agg <- merge(agg, agg_pt1, by = "Customer.ID")
-    
+
     agg_pt2 = sub_data_agg[, create_agg_freq_cncl(.SD), by="Customer.ID"]
-    colnames(agg_pt2)[-1] <- paste0(colnames(agg_pt2)[-1], "_", windows, "M")
-    
+    colnames(agg_pt2)[-1] <- paste0(colnames(agg_pt2)[-1], "_", wdw)
+
     agg <- merge(agg, agg_pt2, by = "Customer.ID", all.x=TRUE)
     agg[is.na(agg)] <- 0
   }
@@ -285,8 +302,9 @@ create_features_on_period <- function(data, start_rep, end_rep, windows_month=c(
 #' @examples 
 #' \dontrun{
 #' TODO
+#' }
 #'
-create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01"), by="month"){
+create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01"), by="month", windows=c("M-1", "M-2", "M-3"), kind="lag"){
   agg <- NULL
   start <- seq.Date(from = from, to = to, by)
   end <- seq.Date(from = from+month(1), to = to+month(1), by)
@@ -314,9 +332,9 @@ keywords = c("CHRISTMAS", "UMBRELLA", "CARD", "MUG", "TEA", "BOTTLE", "BAG",
 #' @param labels : \code{characters}. Characters to look patterns into.
 #' @param patterns : \code{characters} pretty obvious
 #' 
-#' @return a data.table object
+#' @return a list of (data.table, a coverage indicator, summary of keywords)
 #'
-#' @import a list of (data.table, a coverage indicator, summary of keywords)
+#' @import data.table
 #' @export
 #'
 #'
@@ -324,6 +342,7 @@ keywords = c("CHRISTMAS", "UMBRELLA", "CARD", "MUG", "TEA", "BOTTLE", "BAG",
 #' \dontrun{
 #' sample(unique(data$Description), 5000)
 #' l = count_keywords(unique(data$Description))
+#' }
 #'
 count_keywords <- function(labels, patterns=keywords){
   find = function(label) as.numeric(lapply(patterns, function(pattern, x) {grepl(pattern, x)}, label))
