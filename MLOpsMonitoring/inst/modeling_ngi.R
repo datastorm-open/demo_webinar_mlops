@@ -169,3 +169,7 @@ for(end_date in c("2011-10-31", "2011-11-30", "2011-12-31")){
 }
 
 
+# MODELE sur DEC 2010 et test sur 2011
+
+
+
