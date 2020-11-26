@@ -249,7 +249,7 @@ create_agg_freq_cncl <- function(dt){
 #' TODO
 #' }
 #'
-create_features_on_period <- function(data, start_rep, end_rep, windows=c("M-1", "M-2", "M-3"), kind="lag"){
+create_features_on_period <- function(data, start_rep, end_rep, windows, kind="lag"){
   
   agg <- create_var_reponse(data, start_rep, end_rep)
   
@@ -291,6 +291,8 @@ create_features_on_period <- function(data, start_rep, end_rep, windows=c("M-1",
 #' @param from : \code{Date}. starting date. Required
 #' @param to : \code{Date}. end date. Required
 #' @param by : \code{character}. increment of the sequence of Dates
+#' @param windows : \code{integers}. windows=c("M-1", "M-2", "M-3") or windows=c("T-1", "T-2", "T-3")
+#' @param kind : \code{character}. One of c("lapse", "cumulative").
 #' 
 #' 
 #' @return a data.table object
@@ -304,12 +306,12 @@ create_features_on_period <- function(data, start_rep, end_rep, windows=c("M-1",
 #' TODO
 #' }
 #'
-create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01"), by="month", windows=c("M-1", "M-2", "M-3"), kind="lag"){
+create_features <- function(data, from=as.Date("2010/03/01"), to=as.Date("2011/12/01"), by="month", windows=c("M-1", "M-2", "M-3"), kind="lag"){
   agg <- NULL
   start <- seq.Date(from = from, to = to, by)
-  end <- seq.Date(from = from+month(1), to = to+month(1), by)
+  end <- seq.Date(from = from+base::months(1), to = to+base::months(1), by)
   for(i in 1:length(start)){
-    append <- create_features_on_period(data, start[i], end[i])
+    append <- create_features_on_period(data, start[i], end[i], windows, kind)
     if(!is.null(agg)){
       agg = rbind(agg,append)
     } else {
@@ -318,8 +320,6 @@ create_features <- function(from=as.Date("2010/03/01"), to=as.Date("2011/12/01")
   }
   return(agg)
 }
-
-
 
 keywords = c("CHRISTMAS", "UMBRELLA", "CARD", "MUG", "TEA", "BOTTLE", "BAG", 
              "CANDLE", "DOILY", "DOILIES", "MIROR", "WALL ART", "TISSUES", "BOWL", "LIGHT", "BRACELET",
@@ -356,4 +356,3 @@ count_keywords <- function(labels, patterns=keywords){
     "coverage" = mean(rowSums(sparse_dt)>0)*100 # Pct de libellés couverts
   ))
 }
-
