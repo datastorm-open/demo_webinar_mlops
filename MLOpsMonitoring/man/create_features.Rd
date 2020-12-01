@@ -5,6 +5,7 @@
 \title{Compute features on a rolling windows}
 \usage{
 create_features(
+  data,
   from = as.Date("2010/03/01"),
   to = as.Date("2011/12/01"),
   by = "month",
@@ -13,13 +14,17 @@ create_features(
 )
 }
 \arguments{
+\item{data}{: \code{data.table}. Complete dataset.}
+
 \item{from}{: \code{Date}. starting date. Required}
 
 \item{to}{: \code{Date}. end date. Required}
 
 \item{by}{: \code{character}. increment of the sequence of Dates}
 
-\item{data}{: \code{data.table}. Complete dataset.}
+\item{windows}{: \code{integers}. windows=c("M-1", "M-2", "M-3") or windows=c("T-1", "T-2", "T-3")}
+
+\item{kind}{: \code{character}. One of c("lapse", "cumulative").}
 }
 \value{
 a data.table object

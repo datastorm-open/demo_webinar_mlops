@@ -1,55 +1,8 @@
 library(MLOpsMonitoring)
-
-data <- MLOpsMonitoring::import_dataset("/home/ngirard/Webinaire_MLOPS/data/uk-retailer-ii.xlsx")
-dim(data)
-
-### FOR ONE SPECIFIC TARGET PERIOD
-# START_REP <- "2011-12-01"
-# END_REP <- "2011-12-31"
-# WINDOWS_MONTH <- c(3, 6, 12)
-# agg_period <- MLOpsMonitoring::create_features_on_period(data, START_REP, END_REP, WINDOWS_MONTH)
-# dim(agg)
-# colnames(agg)
-
-### SEPARATED WINDOWS
-agg_target1_windows1_lapse <- MLOpsMonitoring::create_features_on_period(data, "2011-05-01", "2011-05-30", c("M-1", "M-2", "M-3"), kind="lag")
-agg_target1_windows1_cumm <- MLOpsMonitoring::create_features_on_period(data, "2011-05-01", "2011-05-30", c("M-1", "M-2", "M-3"), kind="cumulative")
-
-agg_target1_windows3_cumm <- MLOpsMonitoring::create_features_on_period(data, "2011-05-01", "2011-05-30", c("M-3", "M-6", "M-12"), kind="cumulative")
-# equivalent to
-agg_target1_windows3_cumm <- MLOpsMonitoring::create_features_on_period(data, "2011-05-01", "2011-05-30", c("T-1", "T-2", "T-3"), kind="cumulative") 
-
-agg_target1_windows3_lapse <- MLOpsMonitoring::create_features_on_period(data, "2011-05-01", "2011-05-30", c("T-1", "T-2", "T-3"), kind="lag")
-agg_target1_windows12 <- MLOpsMonitoring::create_features_on_period(data, "2011-05-01", "2011-05-30", c("Y-1"))
-
-
-### CONCATENATE SEVERAL TARGET PERIODS
-# agg <- MLOpsMonitoring::create_features(from = as.Date("2010-03-01"), to = as.Date("2011-12-01"), by = "month", windows=c("M-1", "M-2", "M-3"), kind="lag")
-agg <- MLOpsMonitoring::create_features(from = as.Date("2010-03-01"), to = as.Date("2011-04-01"), by = "month", windows=c("M-1", "M-2", "M-3"), kind="lag")
-# write.csv(agg, "/home/mmasson/data/mlops-wbr/features_several_y_period.csv", na = "", row.names = FALSE)
-# agg <- read.csv("/home/mmasson/data/mlops-wbr/features_several_y_period.csv")
-
-
-# AUC : 0.77 / 0.78
-dt = MLOpsMonitoring::create_features_on_period(data, "2011-05-01", "2011-05-31", c("M-3", "M-6", "M-12"), kind="cumulative")
-dt = MLOpsMonitoring::create_features_on_period(data, "2011-05-01", "2011-05-31", c("T-1", "T-2", "T-3", "T-4"), kind="lag")
-dt = MLOpsMonitoring::create_features_on_period(data, "2010-12-01", "2011-01-01", c("T-1", "T-2", "T-3", "T-4"), kind="lag")
-xgboost = MLOpsMonitoring::train_xgboost(dt)
-xgboost$auc
-
-# AUC : 0.74
-agg <- MLOpsMonitoring::create_features(data, from = as.Date("2010-03-01"), to = as.Date("2011-04-01"), by = "month", windows=c("M-1", "M-2", "M-3"), kind="lag")
-xgboost = MLOpsMonitoring::train_xgboost(agg)
-xgboost$auc
-
-# AUC : 0.77
-agg <- MLOpsMonitoring::create_features(data, from = as.Date("2010-03-01"), to = as.Date("2011-04-01"), by = "month", windows=c("T-1", "T-2", "T-3"), kind="lag")
-xgboost = MLOpsMonitoring::train_xgboost(agg)
-xgboost$auc
-
-#################
-## ADD DRIFT    #
-#################
+library(TTR)
+library(caret)
+library(psych)
+library(ggplot2)
 
 keywords = c("TEA", "CANDLE", "LUNCH BAG", "CARD", "DECORATION", "T-LIGHT", "HOT WATTER BOTTLE")
 more_keyword = c("CHRISTMAS", "UMBRELLA", "MIROR", "WALL ART", "TISSUES", "BOWL", "BRACELET",
@@ -61,11 +14,6 @@ more_more_keyword = c("MUG", "BOTTLE",
 
 data <- MLOpsMonitoring::import_dataset("/home/ngirard/Webinaire_MLOPS/data/uk-retailer-ii.xlsx")
 cnt <-  MLOpsMonitoring::count_keywords(unique(data$Description), unique(c(keywords, more_keyword, more_more_keyword)))
-
-library(TTR)
-library(caret)
-library(psych)
-library(ggplot2)
 
 # train model
 agg <- MLOpsMonitoring::create_features(data, from = as.Date("2010-03-01"), to = as.Date("2011-04-01"), by = "month", windows=c("M-1", "M-2", "M-3"), kind="lag")
@@ -148,18 +96,15 @@ for(month in 4:12){
   auc_ko = c(auc_ko, drift_auc)
 }
 
-plot(auc_ok, type='l', ylim=c(.5,1), col="blue", main='Dérive', ylab="AUC")
-lines(auc_ko)
-legend("bottomleft",legend=c('Témoin', 'Avec dérive'), col=c('blue', 'black'), lty=1,lwd=2)
+monitor_score <- function(score_ok, score_ko, ylab){
+  plot(auc_ok, type='l', ylim=c(.5,1), col="blue", main='Dérive', ylab=ylab)
+  lines(auc_ko)
+  legend("bottomleft",legend=c('Témoin', 'Avec dérive'), col=c('blue', 'black'), lty=1,lwd=2)
+}
 
-plot(kap_ok, type='l', ylim=c(.0,.5), col="blue", main='Dérive', ylab="Kappa")
-lines(kap_ko)
-legend("bottomleft",legend=c('Témoin', 'Avec dérive'), col=c('blue', 'black'), lty=1,lwd=2)
-
-plot(acc_ok, type='l', ylim=c(.5,1), col="blue", main='Dérive', ylab="Accuracy")
-lines(acc_ko)
-legend("bottomleft",legend=c('Témoin', 'Avec dérive'), col=c('blue', 'black'), lty=1,lwd=2)
-
+plot_score(auc_ok, auc_ko, "AUC")
+plot_score(kap_ok, kap_ko, "Kappa")
+plot_score(acc_ok, acc_ko, "Accuracy")
 
 #####################
 ### Distrib. categ  #
