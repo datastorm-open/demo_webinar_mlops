@@ -84,8 +84,8 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
   customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
   df_var_reponse <- data[, .(Customer.ID = unique(Customer.ID), VAR_REP = 0)]
   df_var_reponse[Customer.ID %in% customer_id_achat, VAR_REP := 1]
-  df_var_reponse[, MONTH := month(start_rep)]
-  df_var_reponse[, YEAR := year(start_rep)]
+  df_var_reponse[, MONTH := data.table::month(as.Date(start_rep, origin="1970-01-01"))]
+  df_var_reponse[, YEAR := year(as.Date(start_rep, origin="1970-01-01"))]
   return(df_var_reponse)
 }
 
@@ -136,7 +136,7 @@ create_var_reponse_montant <- function(data, start_rep="2011-10-01", end_rep="20
 #' }
 #'
 create_subset_data <- function(data, to="2011-10-01", window_months = 3){
-  end_agg <- as.Date(to)
+  end_agg <- as.Date(to, origin="1970-01-01")
   lubridate::day(end_agg) <- 1
   start_agg <- end_agg %m-% months(window_months)
   sub_data_agg <- data[InvoiceDate >= start_agg & InvoiceDate < end_agg,]
@@ -299,7 +299,7 @@ create_features_on_period <- function(data, start_rep, end_rep, windows, kind="l
       latest_X = start_rep # stay unchanged <=> beginning of response period
       length_X = len*n     # variable length : n x Y=12months S=6months T=3months M=1Month
     }else if(kind=="lag"){
-      latest_X = as.Date(start_rep)-months(len*(n-1)) # (n-1) x Y=12months S=6months T=3months M=1Month
+      latest_X = as.Date(start_rep, origin="1970-01-01")-months(len*(n-1)) # (n-1) x Y=12months S=6months T=3months M=1Month
       length_X = len # defined by Y/S/T/M
     }
     
