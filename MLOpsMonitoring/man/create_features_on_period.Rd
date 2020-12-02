@@ -4,7 +4,14 @@
 \alias{create_features_on_period}
 \title{Compute features on a specific targeted period}
 \usage{
-create_features_on_period(data, start_rep, end_rep, windows, kind = "lag")
+create_features_on_period(
+  data,
+  start_rep,
+  end_rep,
+  windows,
+  kind = "lag",
+  target = "factor"
+)
 }
 \arguments{
 \item{data}{: \code{data.table}. Complete dataset.}
@@ -16,6 +23,8 @@ create_features_on_period(data, start_rep, end_rep, windows, kind = "lag")
 \item{windows}{: \code{integers}. windows=c("M-1", "M-2", "M-3") or windows=c("T-1", "T-2", "T-3")}
 
 \item{kind}{: \code{character}. One of c("lapse", "cumulative").}
+
+\item{target}{: \code{character}. One of c("factor", "amount").}
 }
 \value{
 a data.table object

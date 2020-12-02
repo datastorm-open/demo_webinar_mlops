@@ -4,7 +4,7 @@
 \alias{train_rf}
 \title{Train a RandomForest model. Compute AUC.}
 \usage{
-train_rf(agg)
+train_rf(agg, print_rf = TRUE, seed = 28, rep_factor = TRUE)
 }
 \arguments{
 \item{agg}{: \code{data.table}. Features and target.}

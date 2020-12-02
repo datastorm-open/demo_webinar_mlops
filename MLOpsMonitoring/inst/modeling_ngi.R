@@ -49,23 +49,6 @@ train_rf <- function(agg, print_rf=TRUE, seed=28, rep_factor=TRUE){
   
 }
 
-# Accuracy
-accuracy <- function(actual, pred,  best=FALSE, threshold=0.5){
-  pred_ROCR <- ROCR::prediction(pred, actual)
-  acc <- ROCR::performance(pred_ROCR, measure = "acc")
-  # Si on veut renvoyer la meilleure accuracy avec le meilleur seuil:
-  if(best){
-    best_accuracy <- max(acc@y.values[[1]])
-    best_threshold <- acc@x.values[[1]][which(acc@y.values[[1]] == best_accuracy)]
-    if(length(best_threshold) > 1){
-      best_threshold <- min(best_threshold)
-    }
-    return(list(acc=best_accuracy, threshold=best_threshold))
-  }
-  else{
-    return(acc@y.values[[1]][which(acc@x.values[[1]]==threshold)])
-  }
-}
 
 res3mois <- train_rf(agg_target3)
 res3mois$auc
