@@ -23,25 +23,47 @@
 #' res_4trim$auc
 #' }
 #'
-train_rf <- function(agg){
-  set.seed(28)
+train_rf <- function(agg, print_rf=TRUE, seed=28, rep_factor=TRUE){
+  agg <- apply(agg, 2,  function(x) replace(x, is.infinite(x), NA))
+  agg[is.na(agg)] <- 0
+  agg <- as.data.table(agg)
+  
+  set.seed(seed)
   customer_validation <- sample(agg$Customer.ID, round(length(unique(agg$Customer.ID))*0.25))
   agg_val <- agg[Customer.ID %in% customer_validation]
   agg_train <- agg[!(Customer.ID %in% customer_validation)]
   
   X_train <- agg_train[, -c("Customer.ID", "VAR_REP", "YEAR")]
-  y_train <- as.factor(agg_train$VAR_REP)
   X_val <- agg_val[, -c("Customer.ID", "VAR_REP", "YEAR")]
-  y_val <- as.factor(agg_val$VAR_REP)
-  
+  y_train <- agg_train$VAR_REP
+  y_val <- agg_val$VAR_REP
+  if(rep_factor){
+    y_train <- as.factor(y_train)
+    y_val <- as.factor(y_val) 
+  }
+
+  set.seed(seed)
   train_control <- caret::trainControl(method="cv", number=4)
   rf <- caret::train(x=X_train, 
                      y=y_train, 
-                     trControl=train_control, method="rf", ntree=250)
-  print(rf)
-  pred_validation <- predict(rf, X_val, type="prob")[, 2]
-  metric_auc <- auc(actual = agg_val$VAR_REP, pred = pred_validation)
-  return(list(xgboost=rf, auc=metric_auc, pred=pred_validation))
+                     trControl=train_control, method="rf", ntree=100)
+  if(print_rf) {print(rf)}
+  if(rep_factor){
+    pred_validation <- predict(rf, X_val, type="prob")[, 2]
+    metric_auc <- auc(actual = agg_val$VAR_REP, pred = pred_validation)
+    metric_accuracy <- accuracy(actual = agg_val$VAR_REP, pred = pred_validation, best=TRUE)
+    return(list(rf=rf, auc=metric_auc, acc=metric_accuracy$acc, threshold=metric_accuracy$threshold,
+                pred=pred_validation, id_val=customer_validation))
+  }
+  else{
+    pred_validation <- predict(rf, X_val)
+    metric_rmse <- Metrics::rmse(actual = agg_val$VAR_REP, predicted = pred_validation)
+    metric_mae <- Metrics::mae(actual = agg_val$VAR_REP, predicted = pred_validation)
+    return(list(rf=rf, rmse=metric_rmse, mae=metric_mae,
+                pred=pred_validation, id_val=customer_validation))
+  }
+  
+  
 }
 
 #' Train a RandomForest model. Compute AUC.

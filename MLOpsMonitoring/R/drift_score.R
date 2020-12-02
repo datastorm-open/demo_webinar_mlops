@@ -34,9 +34,9 @@ drift_score <- function(X_train, X_test){
   train_control <- caret::trainControl(method="cv", number=4)
   rf <- caret::train(x=df_drift[, -c("Y_DRIFTSCORE")], 
                                    y=df_drift[["Y_DRIFTSCORE"]], 
-                     trControl=train_control, method="rf", ntree=250)
+                     trControl=train_control, method="rf", ntree=50)
   # print(rf)
-  pred_drift <- predict(rf, df_drift[, -c("Y_DRIFTSCORE")])
+  pred_drift <- predict(rf, df_drift[, -c("Y_DRIFTSCORE")], type="prob")[, 2]
   matthews_score <- mccr::mccr(df_drift$Y_DRIFTSCORE, ifelse(pred_drift >= 0.5, 1, 0))
   auc_drift <- auc(df_drift$Y_DRIFTSCORE, pred_drift)
   return(list(matthews=matthews_score, auc=auc_drift))

@@ -2,89 +2,68 @@ source("MLOpsMonitoring/R/dataset.R")
 source("MLOpsMonitoring/R/drift_score.R")
 
 library(caret)
-
-agg[, .N/nrow(agg), VAR_REP]
-
-# Gestion des Inf
-# agg <- apply(agg, 2,  function(x) replace(x, is.infinite(x), NA))
-# agg[is.na(agg)] <- 0
-# agg <- as.data.table(agg)
-
-# col_isna <- apply(agg_na, 2, anyNA)
-# col_isna <- col_isna[col_isna == TRUE]
-# aa <- as.data.table(agg_na)[is.na(FREQ_ACHAT_3M)]
-# aa[, colnames(aa)[grep("_3M", colnames(aa))], with=FALSE]
-
-# Random Forest
-# length(unique(agg$Customer.ID))
-# set.seed(28)
-# customer_validation <- sample(agg$Customer.ID, round(length(unique(agg$Customer.ID))*0.25))
-# 
-# agg_val <- agg[Customer.ID %in% customer_validation]
-# agg_train <- agg[!(Customer.ID %in% customer_validation)]
-# 
-# X_train <- agg_train[, -c("Customer.ID", "VAR_REP", "MONTH")]
-# y_train <- as.factor(agg_train$VAR_REP)
-# X_val <- agg_val[, -c("Customer.ID", "VAR_REP", "MONTH")]
-# y_val <- as.factor(agg_val$VAR_REP)
-# 
-# dim(X_train)
-# dim(X_val)
-# 
-# colnames(X_train)
-# 
-# train_control <- caret::trainControl(method="cv", number=4)
-# rf <- caret::train(x=X_train, 
-#                    y=y_train, 
-#                    trControl=train_control, method="rf", ntree=250)
-# print(rf)
-# pred_validation <- predict(rf, X_val, type="prob")[, 2]
-# auc(actual = agg_val$VAR_REP, pred = pred_validation)
-# 
-# # Importance
-# varImp(rf)
-# plot(varImp(rf), top=30)
-
+library(Metrics)
 
 
 # Modèle target sur 3 mois
-train_rf <- function(agg){
+train_rf <- function(agg, print_rf=TRUE, seed=28, rep_factor=TRUE){
   agg <- apply(agg, 2,  function(x) replace(x, is.infinite(x), NA))
   agg[is.na(agg)] <- 0
   agg <- as.data.table(agg)
   
-  set.seed(28)
+  set.seed(seed)
   customer_validation <- sample(agg$Customer.ID, round(length(unique(agg$Customer.ID))*0.25))
   agg_val <- agg[Customer.ID %in% customer_validation]
   agg_train <- agg[!(Customer.ID %in% customer_validation)]
   
   X_train <- agg_train[, -c("Customer.ID", "VAR_REP")]
-  y_train <- as.factor(agg_train$VAR_REP)
   X_val <- agg_val[, -c("Customer.ID", "VAR_REP")]
-  y_val <- as.factor(agg_val$VAR_REP)
-  
+  y_train <- agg_train$VAR_REP
+  y_val <- agg_val$VAR_REP
+  if(rep_factor){
+    y_train <- as.factor(y_train)
+    y_val <- as.factor(y_val) 
+  }
+
+  set.seed(seed)
   train_control <- caret::trainControl(method="cv", number=4)
   rf <- caret::train(x=X_train, 
                      y=y_train, 
                      trControl=train_control, method="rf", ntree=100)
-  print(rf)
-  pred_validation <- predict(rf, X_val, type="prob")[, 2]
-  metric_auc <- auc(actual = agg_val$VAR_REP, pred = pred_validation)
-  return(list(rf=rf, auc=metric_auc, pred=pred_validation, id_val=customer_validation))
+  if(print_rf) {print(rf)}
+  if(rep_factor){
+    pred_validation <- predict(rf, X_val, type="prob")[, 2]
+    metric_auc <- auc(actual = agg_val$VAR_REP, pred = pred_validation)
+    metric_accuracy <- accuracy(actual = agg_val$VAR_REP, pred = pred_validation, best=TRUE)
+    return(list(rf=rf, auc=metric_auc, acc=metric_accuracy$acc, threshold=metric_accuracy$threshold,
+                pred=pred_validation, id_val=customer_validation))
+  }
+  else{
+    pred_validation <- predict(rf, X_val)
+    metric_rmse <- Metrics::rmse(actual = agg_val$VAR_REP, predicted = pred_validation)
+    metric_mae <- Metrics::mae(actual = agg_val$VAR_REP, predicted = pred_validation)
+    return(list(rf=rf, rmse=metric_rmse, mae=metric_mae,
+                pred=pred_validation, id_val=customer_validation))
+  }
+  
+  
 }
 
 # Accuracy
-accuracy <- function(actual, pred,  best=TRUE){
+accuracy <- function(actual, pred,  best=FALSE, threshold=0.5){
   pred_ROCR <- ROCR::prediction(pred, actual)
   acc <- ROCR::performance(pred_ROCR, measure = "acc")
   # Si on veut renvoyer la meilleure accuracy avec le meilleur seuil:
   if(best){
     best_accuracy <- max(acc@y.values[[1]])
     best_threshold <- acc@x.values[[1]][which(acc@y.values[[1]] == best_accuracy)]
+    if(length(best_threshold) > 1){
+      best_threshold <- min(best_threshold)
+    }
     return(list(acc=best_accuracy, threshold=best_threshold))
   }
   else{
-    return(acc@y.values[[1]][which(acc@x.values[[1]]==0.5)])
+    return(acc@y.values[[1]][which(acc@x.values[[1]]==threshold)])
   }
 }
 
@@ -169,7 +148,7 @@ for(end_date in c("2011-10-31", "2011-11-30", "2011-12-31")){
 }
 
 
-# MODELE sur DEC 2010 et test sur 2011
+
 
 
 

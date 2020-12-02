@@ -64,7 +64,7 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
   return(uk_retailer_2)
 }
 
-#' Create response variable : 0 if customer did not buy anything in targetted month, 1 if the it did.
+#' Create response variable : 0 if customer did not buy anything in targeted month, 1 if the it did.
 #'
 #' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
 #' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
@@ -84,6 +84,34 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
   customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
   df_var_reponse <- data[, .(Customer.ID = unique(Customer.ID), VAR_REP = 0)]
   df_var_reponse[Customer.ID %in% customer_id_achat, VAR_REP := 1]
+  df_var_reponse[, MONTH := month(start_rep)]
+  df_var_reponse[, YEAR := year(start_rep)]
+  return(df_var_reponse)
+}
+
+#' Create response variable : amount of products purchased in the targeted month.
+#'
+#' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
+#' 
+#' @return a data.table object
+#'
+#' @import data.table
+#' @export
+#'
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#' }
+#'
+create_var_reponse_montant <- function(data, start_rep="2011-10-01", end_rep="2011-10-31"){
+  df_var_reponse <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, 
+                         .(VAR_REP = sum(Quantity*Price)), 
+                         by = Customer.ID]
+  df_var_reponse <- merge(df_var_reponse, data[, .(Customer.ID=unique(Customer.ID))], by = "Customer.ID", all.y=TRUE)
+  df_var_reponse[is.na(VAR_REP), VAR_REP := 0]
+  df_var_reponse[VAR_REP < 0, VAR_REP := 0]
   df_var_reponse[, MONTH := month(start_rep)]
   df_var_reponse[, YEAR := year(start_rep)]
   return(df_var_reponse)
@@ -234,6 +262,7 @@ create_agg_freq_cncl <- function(dt){
 #' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
 #' @param windows : \code{integers}. windows=c("M-1", "M-2", "M-3") or windows=c("T-1", "T-2", "T-3")
 #' @param kind : \code{character}. One of c("lapse", "cumulative").
+#' @param target : \code{character}. One of c("factor", "amount").
 #' 
 #' 
 #' @return a data.table object
@@ -249,9 +278,18 @@ create_agg_freq_cncl <- function(dt){
 #' TODO
 #' }
 #'
-create_features_on_period <- function(data, start_rep, end_rep, windows, kind="lag"){
+create_features_on_period <- function(data, start_rep, end_rep, windows, kind="lag", target="factor"){
   
-  agg <- create_var_reponse(data, start_rep, end_rep)
+  if(target=="factor"){
+    agg <- create_var_reponse(data, start_rep, end_rep)
+  }
+  else if(target =="amount"){
+    agg <- create_var_reponse_montant(data, start_rep, end_rep)
+  }
+  else{
+    stop("target doit valoir soit factor soit amount")
+  }
+  
   
   for(wdw in windows){
     len = unname(c("Y"=12, "S"=6, "T"=3, "M"=1)[stringr::str_split(wdw, "-")[[1]][1]])
