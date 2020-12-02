@@ -50,8 +50,8 @@ train_rf <- function(agg, print_rf=TRUE, seed=28, rep_factor=TRUE){
   if(print_rf) {print(rf)}
   if(rep_factor){
     pred_validation <- predict(rf, X_val, type="prob")[, 2]
-    metric_auc <- auc(actual = agg_val$VAR_REP, pred = pred_validation)
-    metric_accuracy <- accuracy(actual = agg_val$VAR_REP, pred = pred_validation, best=TRUE)
+    metric_auc <- auc(actual = y_val, pred = pred_validation)
+    metric_accuracy <- accuracy(actual = y_val, pred = pred_validation, best=TRUE)
     return(list(rf=rf, auc=metric_auc, acc=metric_accuracy$acc, threshold=metric_accuracy$threshold,
                 pred=pred_validation, id_val=customer_validation))
   }
