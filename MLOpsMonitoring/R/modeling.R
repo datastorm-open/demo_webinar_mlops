@@ -29,9 +29,9 @@ train_rf <- function(agg){
   agg_val <- agg[Customer.ID %in% customer_validation]
   agg_train <- agg[!(Customer.ID %in% customer_validation)]
   
-  X_train <- agg_train[, -c("Customer.ID", "VAR_REP")]
+  X_train <- agg_train[, -c("Customer.ID", "VAR_REP", "YEAR")]
   y_train <- as.factor(agg_train$VAR_REP)
-  X_val <- agg_val[, -c("Customer.ID", "VAR_REP")]
+  X_val <- agg_val[, -c("Customer.ID", "VAR_REP", "YEAR")]
   y_val <- as.factor(agg_val$VAR_REP)
   
   train_control <- caret::trainControl(method="cv", number=4)
@@ -72,9 +72,16 @@ train_xgboost <- function(agg){
   X_val <- agg_val[, -c("Customer.ID", "VAR_REP")]
   y_val <- as.factor(agg_val$VAR_REP)
   train_control <- caret::trainControl(method="cv", number=4)
-  tune_grid <- expand.grid(nrounds=c(100,200,300,400),
-                           max_depth = c(3:7),
-                           eta = c(0.05, 1),
+  # tune_grid <- expand.grid(nrounds=c(100,200,300,400),
+  #                          max_depth = c(3:7),
+  #                          eta = c(0.05, 1),
+  #                          gamma = c(0.01),
+  #                          colsample_bytree = c(0.75),
+  #                          subsample = c(0.50),
+  #                          min_child_weight = c(0))
+  tune_grid <- expand.grid(nrounds=c(200),
+                           max_depth = c(3),
+                           eta = c(0.05),
                            gamma = c(0.01),
                            colsample_bytree = c(0.75),
                            subsample = c(0.50),

@@ -4,13 +4,7 @@
 \alias{create_features_on_period}
 \title{Compute features on a specific targeted period}
 \usage{
-create_features_on_period(
-  data,
-  start_rep,
-  end_rep,
-  windows = c("M-1", "M-2", "M-3"),
-  kind = "lag"
-)
+create_features_on_period(data, start_rep, end_rep, windows, kind = "lag")
 }
 \arguments{
 \item{data}{: \code{data.table}. Complete dataset.}

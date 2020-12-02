@@ -1,0 +1,13 @@
+/* fix header */
+.ribbon {
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100000;
+  margin-right: 0cm;
+  margin-top: 0.1cm;
+  display: block;
+  height: 65px;
+  text-decoration: none;
+  overflow-x: hidden;
+}
