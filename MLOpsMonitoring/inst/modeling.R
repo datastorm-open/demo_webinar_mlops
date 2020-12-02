@@ -97,7 +97,6 @@ monitoring_main <- function(data,
       l_drift_auc[idx] = res_drift$auc
       l_dirft_matt[idx] = res_drift$matthews
     }
-    browser()
     out_period[[perf_1_name]] = perf_1
     out_period[[perf_2_name]] = perf_2
     out_period[["DRIFT_AUC"]] = l_drift_auc
