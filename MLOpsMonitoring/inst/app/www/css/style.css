@@ -1,4 +1,9 @@
 /* fix header */
+
+.content{
+  padding:0px;
+}
+
 .ribbon {
   position: fixed;
   right: 0;
@@ -10,4 +15,34 @@
   height: 65px;
   text-decoration: none;
   overflow-x: hidden;
+}
+
+.logo:hover{
+  background-color: #420d09 !important;
+  color: #fff;
+}
+
+.logo {
+  background-color: #420d09 !important;
+  color: #fff;
+}
+
+.main-sidebar {
+  background-color: #420d09 !important;
+  color: #fff;
+}
+
+.skin-blue .main-header .navbar {
+  background-color: #FFF;
+  color: #404040;
+}
+
+.skin-blue .main-header .navbar:hover{
+  background-color: #FFF;
+  color: #404040;
+}
+
+.skin-blue .main-header .navbar {
+  background-color: #FFF;
+  /*border-bottom: 3px solid #e0e0e0;*/
 }

@@ -8,14 +8,14 @@ library(ggplot2)
 data  <- MLOpsMonitoring::import_dataset("/home/ngirard/Webinaire_MLOPS/data/uk-retailer-ii.xlsx")
 
 # Train
-train <- MLOpsMonitoring::create_features(data, 
-                                          from=as.Date("2010-03-01", origin="1970-01-01"), 
-                                          to=as.Date("2011-01-01", origin="1970-01-01"), by="month", 
-                                          windows=c("M-6"), kind="cumulative")
-xgb = MLOpsMonitoring::train_xgboost(train)
-xgb$auc
-rf = MLOpsMonitoring::train_rf(train)
-rf$auc
+# train <- MLOpsMonitoring::create_features(data, 
+#                                           from=as.Date("2010-03-01", origin="1970-01-01"), 
+#                                           to=as.Date("2011-01-01", origin="1970-01-01"), by="month", 
+#                                           windows=c("M-6"), kind="cumulative")
+# xgb = MLOpsMonitoring::train_xgboost(train)
+# xgb$auc
+# rf = MLOpsMonitoring::train_rf(train)
+# rf$auc
 
 train_6M <- MLOpsMonitoring::create_features_on_period(data, 
                                                        start_rep=as.Date("2010-07-01"), end_rep=as.Date("2010-07-31"),
@@ -71,7 +71,7 @@ monitoring_main <- function(data,
     for(idx in 1:2){
       X_pred = X_preds[[idx]]
       if(kind_target == "factor"){
-        y_pred <- as.factor(y_pred)
+        # y_pred <- as.factor(y_pred)
         pred_validation <- predict(model, X_pred, type="prob")[, 2]
         metric_auc <- auc(actual = y_pred, pred = pred_validation)
         metric_accuracy <- accuracy(actual = y_pred, pred = pred_validation, best=TRUE)
@@ -133,6 +133,10 @@ monitoring_main <- function(data,
 }
 
 scores = monitoring_main(data, train_6M[, -c("Customer.ID", "VAR_REP", "YEAR")], "2011-01-01", "2011-12-31", rf_6M$rf)
+# write.csv(scores, file="/home/mmasson/data/mlops-wbr/save_output_1203.csv")
+# scores = read.csv("/home/mmasson/data/mlops-wbr/save_output_1203.csv")
+ 
+
 
 # Nos graphs mois par mois à partir de out
 
