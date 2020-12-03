@@ -24,11 +24,7 @@ shinyServer(function(input, output, session) {
   }
   
   
-  # data = import_dataset()
-  # fct = density(data$Quantity)
-  # amPlot(fct$x, fct$y)
-  
-  
+  source("src/server/features_server.R", local = T)
   source("src/server/modelperf_server.R", local = T)
   source("src/server/driftscore_server.R", local = T)
 })

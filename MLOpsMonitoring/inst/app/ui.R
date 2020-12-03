@@ -1,6 +1,6 @@
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    menuItem("Suivi des ventes", tabName = "customers", icon = icon("cart-arrow-down")),
+    menuItem("Suivi des ventes", tabName = "features", icon = icon("cart-arrow-down")),
     menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line")),
     menuItem("Stabilité des inputs", tabName = "driftscore", icon = icon("chart-line"))
   )
@@ -27,7 +27,7 @@ body <- dashboardBody(
   div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",
     br(),
     tabItems(
-      tabItem(tabName = "customers", p("Stats sur les ventes (indicateurs). Distribution des features du modèle.")),
+      tabItem(tabName = "features", source("src/ui/features_ui.R", local = T)$value),
       tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
       tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value)
     )

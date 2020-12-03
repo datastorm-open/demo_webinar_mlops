@@ -23,6 +23,16 @@ train_6M <- MLOpsMonitoring::create_features_on_period(data,
 rf_6M = train_rf(train_6M, rep_factor = TRUE)
 rf_6M$auc
 
+write.csv(train_6M, file=paste0("/home/mmasson/data/mlops-wbr/save_features_train.csv"))
+
+
+# data = import_dataset()
+# for(TARGET_start in seq.Date(from=as.Date("2011-01-01", origin="1970-01-01"), to=as.Date("2011-12-31", origin="1970-01-01"), by="month")){
+#   TARGET_start = as.Date(TARGET_start, origin="1970-01-01")
+#   TARGET_end = TARGET_start + base::months(1)
+#   write.csv(MLOpsMonitoring::create_features_on_period(data, TARGET_start, TARGET_end, c("M-6"), "cumulative"),
+#             file=paste0("/home/mmasson/data/mlops-wbr/save_features_",TARGET_start,".csv"))
+# }
 
 price_related_col <- c("BASKET_PRICE_MEAN_M-6", "BASKET_PRICE_MIN_M-6", "BASKET_PRICE_MAX_M-6",
                        "EXPENSES_M-6", "EXPENSES_CANCELLED_M-6", "EXPENSES_FREQ_M-6")
@@ -140,5 +150,9 @@ scores = monitoring_main(data, train_6M[, -c("Customer.ID", "VAR_REP", "YEAR")],
 
 # Nos graphs mois par mois à partir de out
 
+
+# data = import_dataset()
+# fct = density(data$Quantity)
+# amPlot(fct$x, fct$y)
 
 
