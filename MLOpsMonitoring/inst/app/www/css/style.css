@@ -32,9 +32,19 @@
   color: #fff;
 }
 
-.skin-blue .main-header .navbar {
+ {
+  background-color: #FFF;
+  color: #000;
+}
+
+.skin-blue .main-header .navbar .sidebar-toggle {
   background-color: #FFF;
   color: #404040;
+}
+
+.sidebar-toggle:hover {
+  background-color: #FFF !important;
+  color: #404040 !important;
 }
 
 .skin-blue .main-header .navbar:hover{

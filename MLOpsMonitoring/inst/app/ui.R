@@ -1,6 +1,7 @@
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    menuItem("Suivi des ventes", tabName = "customers", icon = icon("cart-arrow-down"))
+    menuItem("Suivi des ventes", tabName = "customers", icon = icon("cart-arrow-down")),
+    menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line"))
   )
 )
 
@@ -14,18 +15,19 @@ body <- dashboardBody(
   img(src="img/logoDS.png", class="ribbon", style="margin-right: 1.3cm;cm;margin-top: 0.2cm;margin-bottom: 0.1cm;height: 38px"),
   
   div(style="position:relative; top:-20px;background-color:#fff;border-bottom: 3px solid #e0e0e0;padding:20px;", 
-      sliderInput("time",
-              "",
-              min = as.Date("2009-01-01","%Y-%m-%d"),
-              max = as.Date("2012-01-01","%Y-%m-%d"),
-              value=as.Date("2010-12-01"),
-              timeFormat="%Y-%m-%d", width="100%")
+      sliderInput("t",
+                  "Nous sommes le :",
+                  min = as.Date("2011-01-01","%Y-%m-%d"),
+                  max = as.Date("2012-02-01","%Y-%m-%d"),
+                  value=as.Date("2011-03-01"),
+                  timeFormat="%Y-%m-%d", width="100%")
       ),
   
-  div(style="padding:15px;",
+  div(style="padding-left:15px;padding-right:15px;overflow-y: scroll;",
     tabItems(
-      tabItem(tabName = "customers", p("bla"))
-      #tabItem(tabName = "analysis", source("src/ui/analysis_ui.R", local = T)$value)
+      tabItem(tabName = "customers", p("Stats sur les ventes (indicateurs). Distribution des features du modèle.")),
+      tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value)
+      # tabItem(tabName = "modelperf", )
     )
   )
 )

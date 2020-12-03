@@ -10,4 +10,8 @@ shinyServer(function(input, output, session) {
       stringsAsFactors = FALSE
     ))) 
   }
+  
+  scores_at_t <- reactive({scores[STATUS=="pertubé"&END<=input$t,]})
+  
+  source("src/server/modelperf_server.R", local = T)
 })
