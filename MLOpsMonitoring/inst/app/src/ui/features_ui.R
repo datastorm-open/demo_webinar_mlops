@@ -1,6 +1,7 @@
 fluidPage(
   selectInput("feature", "Choisissez une feature", choices=setdiff(colnames(features_train),c("X", "MONTH", "Customer.ID", "VAR_REP", "YEAR"))), 
   fluidRow(
+    box(amChartsOutput("density"), title = "Densités"), 
     box(amChartsOutput("qqplot"), title = "QQPlot")
     ),
   p("Sélection d'une feature du modèle"),

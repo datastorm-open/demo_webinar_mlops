@@ -14,3 +14,13 @@ output$qqplot <- renderAmCharts({
   amLines(chart,y=unname(dist_bef), type="l", col="black")
 })
 
+output$density <- renderAmCharts({
+  qtl = 1:99*0.01
+  dist_aft = density(latest_batch()[,c(input$feature)]) 
+  dist_bef = density(features_train[,c(input$feature)])
+  #dt=merge(data.table(x=dist_bef$x, y_1=dist_bef$y), data.table(x=dist_aft$x, y_2=dist_aft$y), on="x", all=T)
+  #chart=amPlot(dt$x, dt$y_1, type="l")
+  #amLines(chart,y=dt$y_2, type="l", col="black")
+  chart=amPlot(dist_aft$x, dist_aft$y, type="l")
+  chart
+})
