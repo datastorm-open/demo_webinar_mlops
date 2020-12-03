@@ -23,7 +23,7 @@ body <- dashboardBody(
                   timeFormat="%Y-%m-%d", width="100%")
       ),
   
-  div(style="padding-left:15px;padding-right:15px;overflow-y: scroll;",
+  div(style="padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 180px);",
     tabItems(
       tabItem(tabName = "customers", p("Stats sur les ventes (indicateurs). Distribution des features du modèle.")),
       tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value)

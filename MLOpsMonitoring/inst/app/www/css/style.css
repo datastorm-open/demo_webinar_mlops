@@ -1,5 +1,9 @@
 /* fix header */
 
+body{
+  overflow-y: hidden ;
+}
+
 .content{
   padding:0px;
 }
@@ -30,11 +34,6 @@
 .main-sidebar {
   background-color: #420d09 !important;
   color: #fff;
-}
-
- {
-  background-color: #FFF;
-  color: #000;
 }
 
 .skin-blue .main-header .navbar .sidebar-toggle {
