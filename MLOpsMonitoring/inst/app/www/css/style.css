@@ -36,12 +36,28 @@ body{
   color: #fff;
 }
 
+.skin-blue .sidebar-menu > li.active > a, .skin-blue .sidebar-menu > li:hover > a {
+  border-left-color: #fff;
+  color: #fff;
+  background: #420d09;
+  font-size: 11pt;
+  font-weight: bold;
+}
+
+
 .skin-blue .main-header .navbar .sidebar-toggle {
   background-color: #FFF;
   color: #404040;
 }
 
+.sidebar-toggle {
+  display:none !important;
+  background-color: #FFF !important;
+  color: #404040 !important;
+}
+
 .sidebar-toggle:hover {
+  display:none !important;
   background-color: #FFF !important;
   color: #404040 !important;
 }

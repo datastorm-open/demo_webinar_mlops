@@ -1,0 +1,2 @@
+output$drift_auc <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "DRIFT_AUC", "Drift AUC", .6)})
+output$drift_matth <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "DRIFT_MATTHEWWS", "DRIFT MATTHEWS", .6)})

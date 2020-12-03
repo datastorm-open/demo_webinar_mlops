@@ -1,7 +1,8 @@
 sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem("Suivi des ventes", tabName = "customers", icon = icon("cart-arrow-down")),
-    menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line"))
+    menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line")),
+    menuItem("Stabilité des inputs", tabName = "driftscore", icon = icon("chart-line"))
   )
 )
 
@@ -14,7 +15,7 @@ body <- dashboardBody(
   
   img(src="img/logoDS.png", class="ribbon", style="margin-right: 1.3cm;cm;margin-top: 0.2cm;margin-bottom: 0.1cm;height: 38px"),
   
-  div(style="position:relative; top:-20px;background-color:#fff;border-bottom: 3px solid #e0e0e0;padding:20px;", 
+  div(style="position:relative; top:-20px;background-color:#fff;padding:20px;box-shadow: 0 10px 6px -6px #999;z-index:5;", 
       sliderInput("t",
                   "Nous sommes le :",
                   min = as.Date("2011-01-01","%Y-%m-%d"),
@@ -23,11 +24,12 @@ body <- dashboardBody(
                   timeFormat="%Y-%m-%d", width="100%")
       ),
   
-  div(style="padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 180px);",
+  div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",
+    br(),
     tabItems(
       tabItem(tabName = "customers", p("Stats sur les ventes (indicateurs). Distribution des features du modèle.")),
-      tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value)
-      # tabItem(tabName = "modelperf", )
+      tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
+      tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value)
     )
   )
 )
