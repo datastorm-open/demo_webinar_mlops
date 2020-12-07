@@ -6,10 +6,13 @@ require(shinymanager)
 require(shinycssloaders)
 require(openxlsx)
 require(rAmCharts)
+require(MLmetrics)
+require(changepoint)
 
 dev = TRUE
 
-scores = as.data.table(read.csv("/home/mmasson/data/mlops-wbr/save_output_1203.csv"))
+scores = as.data.table(read.csv("/home/mmasson/data/mlops-wbr/save_output_1207.csv"))
+scores$cheatcode = c(rep(5, nrow(scores)/2), rep(9, nrow(scores)/2))
 scores$START = as.POSIXct.Date(as.Date(scores$START))
 scores$END = as.POSIXct.Date(as.Date(scores$END))
 

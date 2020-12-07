@@ -1,3 +1,5 @@
+output$cheatcode <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "cheatcode", "Indicateur de dérive imaginaire", .6)})
+output$logloss <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "LogLoss", "Log Loss", .6)})
 output$auc_global <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "AUC_GLOBAL", "AUC Global", .6)})
 output$acc_global <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "ACC_GLOBAL", "ACC Global", .6)})
 output$kappa <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "Kappa", "Kappa de Cohen", .2)})

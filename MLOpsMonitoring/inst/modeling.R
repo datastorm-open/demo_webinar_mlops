@@ -126,6 +126,9 @@ monitoring_main <- function(data,
       out_period$Kappa = c(cohen.kappa(data.table("pred"=as.double(pred_test>.5), "real"=y_pred))$kappa,
                            cohen.kappa(data.table("pred"=as.double(pred_drifted>.5), "real"=y_pred))$kappa)
       
+      out_period$LogLoss =  c(LogLoss(pred_test, y_pred),
+                              LogLoss(pred_drifted, y_pred))
+      
       for(size in c(100,200)){
         out_period[[paste0("TauxAchat-TOP-",size)]] = c(mean(as.logical(y_pred[order(pred_test,decreasing = TRUE)[1:size]])),
                                                         mean(as.logical(y_pred[order(pred_drifted,decreasing = TRUE)[1:size]])))
@@ -143,8 +146,8 @@ monitoring_main <- function(data,
 }
 
 scores = monitoring_main(data, train_6M[, -c("Customer.ID", "VAR_REP", "YEAR")], "2011-01-01", "2011-12-31", rf_6M$rf)
-# write.csv(scores, file="/home/mmasson/data/mlops-wbr/save_output_1203.csv")
-# scores = read.csv("/home/mmasson/data/mlops-wbr/save_output_1203.csv")
+# write.csv(scores, file="/home/mmasson/data/mlops-wbr/save_output_1207.csv")
+# scores = read.csv("/home/mmasson/data/mlops-wbr/save_output_1207.csv")
  
 
 
