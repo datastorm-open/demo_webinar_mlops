@@ -2,7 +2,7 @@ fluidPage(
   fluidRow(
     infoBoxOutput("kolmo_features", width = 6),
     conditionalPanel(condition = "output.display_density !== undefined && output.display_density",
-                     box(width=6,selectInput("feature", "Choisir une feature", choices=c("")), height = "90px")    
+                     box(width=6,selectInput("feature", "Choisir une feature", choices=NULL, selected = NULL), height = "90px")    
     )
   ),
   conditionalPanel(condition = "output.display_density !== undefined && output.display_density",

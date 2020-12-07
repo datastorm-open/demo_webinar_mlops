@@ -42,7 +42,7 @@ body <- dashboardBody(
       sliderInput("t",
                   "Nous sommes le :",
                   min = as.Date("2011-01-01","%Y-%m-%d"),
-                  max = as.Date("2012-02-01","%Y-%m-%d"),
+                  max = as.Date("2012-01-01","%Y-%m-%d"),
                   value=as.Date("2011-03-01"),
                   timeFormat="%Y-%m-%d", width="100%")
       ),
