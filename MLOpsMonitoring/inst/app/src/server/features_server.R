@@ -38,12 +38,12 @@ output$qqplot <- renderAmCharts({
 
 output$density <- renderAmCharts({
   if(display_density() && !is.null(input$feature) && input$feature!=""){
-    dist_aft = density(latest_batch()[,c(input$feature)]) 
-    dist_bef = density(features_train[[input$feature]])
-    #dt=merge(data.table(x=dist_bef$x, y_1=dist_bef$y), data.table(x=dist_aft$x, y_2=dist_aft$y), on="x", all=T)
-    #chart=amPlot(dt$x, dt$y_1, type="l")
-    #amLines(chart,y=dt$y_2, type="l", col="black")
-    chart=amPlot(dist_aft$x, dist_aft$y, type="l")
-    chart
+    mini = min(features_train[[input$feature]])-0.1*abs(min(features_train[[input$feature]]))
+    maxi = max(features_train[[input$feature]])+0.1*abs(max(features_train[[input$feature]]))
+    dist_aft = density(latest_batch()[,c(input$feature)], from=mini, to=maxi) 
+    dist_bef = density(features_train[[input$feature]], from=mini, to=maxi)
+    chart=amPlot(dist_aft$x, dist_aft$y, type="l", title="Dernier batch",
+                 xlab=input$feature, ylab="Densité", zoom=T, legend=T)
+    amLines(chart,y=dist_bef$y, type="l", col="black", title="Données d'entraînement") 
   }
 })
