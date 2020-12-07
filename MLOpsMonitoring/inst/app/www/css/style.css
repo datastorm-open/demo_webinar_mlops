@@ -102,6 +102,11 @@ body{
   border-bottom: 4px solid #420d09;
 }
 
+.irs-from, .irs-to, .irs-single {
+  background-color: #420d09;
+  font-size: 15px;
+}
+
 .skin-blue .main-header .navbar .nav > li > a:focus{
   background: #FFF !important;
   color: #420d09 !important;
