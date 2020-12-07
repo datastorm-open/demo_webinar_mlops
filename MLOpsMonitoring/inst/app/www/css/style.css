@@ -44,6 +44,27 @@ body{
   font-weight: bold;
 }
 
+.skin-blue .main-header .navbar .nav > li > a {
+color: #420d09;
+border-bottom: 4px solid #FFF;
+}
+
+.skin-blue .main-header .navbar .nav > li > a:hover{
+background: #FFF;
+color: #420d09;
+border-bottom: 4px solid #420d09;
+}
+
+.skin-blue .main-header .navbar .nav > li > a:focus{
+background: #FFF;
+color: #420d09;
+border-bottom: 4px solid #420d09;
+}
+
+
+.navbar-custom-menu{
+  margin-right:150px;
+}
 
 .skin-blue .main-header .navbar .sidebar-toggle {
   background-color: #FFF;
@@ -70,4 +91,20 @@ body{
 .skin-blue .main-header .navbar {
   background-color: #FFF;
   /*border-bottom: 3px solid #e0e0e0;*/
+}
+
+.irs-bar {
+border-top: 1px solid #420d09;
+border-bottom: 1px solid #420d09;
+background: #420d09;
+}
+
+.irs-bar-edge{
+  border:1px solid #420d09;
+  background: #420d09;
+}
+
+.info-box-text{
+  white-space: normal;
+  word-wrap: break-word;
 }
