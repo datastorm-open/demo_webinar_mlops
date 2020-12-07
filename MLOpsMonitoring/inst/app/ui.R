@@ -1,8 +1,12 @@
 sidebar <- dashboardSidebar(
-  sidebarMenu(
+  sidebarMenu(id = "sidebar",
     menuItem("Suivi des ventes", tabName = "features", icon = icon("cart-arrow-down")),
     menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line")),
     menuItem("Stabilité des inputs", tabName = "driftscore", icon = icon("chart-line"))
+  ),
+  conditionalPanel(condition = "document.getElementsByClassName('sidebar-menu')[0].children[0].className=='active'",
+    hr(),
+    selectInput("feature", "Choisir une feature", choices=setdiff(colnames(features_train),c("X", "MONTH", "Customer.ID", "VAR_REP", "YEAR")))    
   )
 )
 

@@ -1,6 +1,6 @@
 fluidPage(
   fluidRow( 
-    box(amChartsOutput("drift_auc")),
-    box(amChartsOutput("drift_matth"))
+    box(shinycssloaders::withSpinner(amChartsOutput("drift_auc"))),
+    box(shinycssloaders::withSpinner(amChartsOutput("drift_matth")))
   )
 )
