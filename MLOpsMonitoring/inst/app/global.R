@@ -24,7 +24,6 @@ for(TARGET_start in seq.Date(from=as.Date("2011-01-01", origin="1970-01-01"), to
   features_batch[[as.character(TARGET_end)]] = read.csv(paste0("/home/mmasson/data/mlops-wbr/save_features_",TARGET_start,".csv"))
 }
 
-
 features = setdiff(colnames(features_train), c("X", "Customer.ID", "VAR_REP", "MONTH", "YEAR"))
 distrib_comparison <- function(train, list_of_datasets, features, threshold=0.05, verbose=T){
   options(warn=ifelse(verbose,0,-1))
