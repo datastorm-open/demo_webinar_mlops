@@ -45,20 +45,69 @@ body{
 }
 
 .skin-blue .main-header .navbar .nav > li > a {
-color: #420d09;
-border-bottom: 4px solid #FFF;
+  color: #420d09;
+  border-bottom: 4px solid #FFF;
+  font-size: 17pt;
+  animation: text-shadow 1.5s ease-in-out infinite;
+}
+
+@keyframes text-shadow {
+    0% {
+        transform: translateY(0);
+        text-shadow:
+            0 0 0 #0c2ffb,
+            0 0 0 #2cfcfd,
+            0 0 0 #fb203b,
+            0 0 0 #fefc4b;
+    }
+    20% {
+        transform: translateY(-1em);
+        text-shadow:
+            0 0.125em 0 #0c2ffb,
+            0 0.25em 0 #2cfcfd,
+            0 -0.125em 0 #fb203b,
+            0 -0.25em 0 #fefc4b;
+    }
+    40% {
+        transform: translateY(0.5em);
+        text-shadow:
+            0 -0.0625em 0 #0c2ffb,
+            0 -0.125em 0 #2cfcfd,
+            0 0.0625em 0 #fb203b,
+            0 0.125em 0 #fefc4b;
+    }
+    60% {
+        transform: translateY(-0.25em);
+        text-shadow:
+            0 0.03125em 0 #0c2ffb,
+            0 0.0625em 0 #2cfcfd,
+            0 -0.03125em 0 #fb203b,
+            0 -0.0625em 0 #fefc4b;
+    }
+    80% {
+        transform: translateY(0);
+        text-shadow:
+            0 0 0 #0c2ffb,
+            0 0 0 #2cfcfd,
+            0 0 0 #fb203b,
+            0 0 0 #fefc4b;
+    }
 }
 
 .skin-blue .main-header .navbar .nav > li > a:hover{
-background: #FFF;
-color: #420d09;
-border-bottom: 4px solid #420d09;
+  background: #FFF;
+  color: #420d09;
+  animation-play-state: paused;
+  font-size: 17pt;
+  border-bottom: 4px solid #420d09;
 }
 
 .skin-blue .main-header .navbar .nav > li > a:focus{
-background: #FFF;
-color: #420d09;
-border-bottom: 4px solid #420d09;
+  background: #FFF !important;
+  color: #420d09 !important;
+  font-size: 17pt;
+  animation-play-state: paused;
+  border-bottom: 4px solid #420d09;
 }
 
 
