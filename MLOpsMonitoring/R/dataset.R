@@ -81,7 +81,7 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
 #' }
 #'
 create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31"){
-  customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep, unique(Customer.ID)]
+  customer_id_achat <- data[InvoiceDate >= start_rep & InvoiceDate <= end_rep & Country != "NEWDATA", unique(Customer.ID)]
   df_var_reponse <- data[, .(Customer.ID = unique(Customer.ID), VAR_REP = 0)]
   df_var_reponse[Customer.ID %in% customer_id_achat, VAR_REP := 1]
   df_var_reponse[, MONTH := data.table::month(as.Date(start_rep, origin="1970-01-01"))]
@@ -210,7 +210,6 @@ create_agg_prix_qty <- function(sub_data_agg, all_customers){
 create_agg_freq_cncl <- function(dt){
    
   # subset on product actually bought and products cancelled
-  is_C = function (x) startsWith(x,"C")
   bought = dt[Quantity>0]
   cancelled = dt[Quantity<=0]
 
