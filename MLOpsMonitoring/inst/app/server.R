@@ -12,7 +12,7 @@ shinyServer(function(input, output, session) {
   }
   
   last_batch_name <- reactive({min(names(features_batch)[names(features_batch)>=input$t])})
-  scores_at_t <- reactive({scores[STATUS=="pertubé"&END<=input$t,]})
+  scores_at_t <- reactive({scores[END<=input$t,]})
   
   makeMonitoringCharts <- function(dt, score, main, threshold){
     
