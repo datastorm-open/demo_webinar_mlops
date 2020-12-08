@@ -3,21 +3,29 @@ latest_batch <- reactive({
   features_batch[[as.character(max(periods[periods<=input$t]))]]
 })
 
-display_density <- reactive({any(!is_similar[last_batch_name(),])})
+display_density <- reactive({any(!is_similar()[last_batch_name(),])})
 output$display_density <- display_density
 outputOptions(output, "display_density", suspendWhenHidden = FALSE)
+
+is_similar <- reactive({
+  is_similar <- distrib_comparison(features_train, features_batch, features, verbose=F, 
+                     threshold = input$treshold_kolmo)
+  # browser()
+  is_similar
+})
+
 
 output$kolmo_features <- renderInfoBox({
   alert = display_density()
   infoBox(title = ifelse(alert,"Incohérence(s) entre nouvelles données et jeu d'entraînement", "Cohérence entre nouvelles données et jeu d'entraînement"), 
-          value = ifelse(alert, paste("Sur", sum(!is_similar[last_batch_name(),]), "variable(s)"), "Tout va bien"), 
+          value = ifelse(alert, paste("Sur", sum(!is_similar()[last_batch_name(),]), "variable(s)"), "Tout va bien"), 
           color = ifelse(alert, 'orange', 'green'), 
           width = 12)
 })
 
 observe({
   if(display_density()){
-    updateSelectInput(session, "feature", choices=colnames(is_similar)[which(!is_similar[last_batch_name(),])])    
+    updateSelectInput(session, "feature", choices=colnames(is_similar())[which(!is_similar()[last_batch_name(),])])    
   } else {
     updateSelectInput(session, "feature", choices=NULL, selected = NULL)
   }

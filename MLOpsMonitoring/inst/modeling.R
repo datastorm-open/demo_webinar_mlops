@@ -53,12 +53,15 @@ monitoring_main <- function(data,
                             date_format = "%Y-%m-%d"){
   
   out = data.table()
+  out_drift = data.table()
   for(TARGET_start in seq.Date(from=as.Date(start, origin="1970-01-01"), to=as.Date(end, origin="1970-01-01"), by=delay_update)){
     TARGET_start = as.Date(TARGET_start, origin="1970-01-01")
     TARGET_end = TARGET_start + base::months(1)
     out_period = data.table(START = c(TARGET_start,TARGET_start),
                             END = c(TARGET_end,TARGET_end),
                             STATUS = c("témoin", "pertubé"))
+    out_period_drift = data.table(START = c(TARGET_start,TARGET_start),
+                                  END = c(TARGET_end,TARGET_end))
     
     # Duplication le dataset de nouvelles données
     # Ajouter des pertubations (avec un paramètre d'intensité)
@@ -83,8 +86,8 @@ monitoring_main <- function(data,
       if(kind_target == "factor"){
         # y_pred <- as.factor(y_pred)
         pred_validation <- predict(model, X_pred, type="prob")[, 2]
-        metric_auc <- auc(actual = y_pred, pred = pred_validation)
-        metric_accuracy <- accuracy(actual = y_pred, pred = pred_validation, best=TRUE)
+        metric_auc <- MLOpsMonitoring::auc(actual = y_pred, pred = pred_validation)
+        metric_accuracy <- MLOpsMonitoring::accuracy(actual = y_pred, pred = pred_validation, best=TRUE)
         perf_1[idx] = metric_auc
         perf_1_name = "AUC_GLOBAL"
         perf_2[idx] = metric_accuracy$acc
@@ -102,7 +105,7 @@ monitoring_main <- function(data,
       else{
         stop("kind_target soit factor soit amount")
       }
-      
+
       res_drift <- drift_score(X_train[,-c("MONTH")], X_pred[,-c("MONTH")])
       l_drift_auc[idx] = res_drift$auc
       l_dirft_matt[idx] = res_drift$matthews
@@ -111,7 +114,9 @@ monitoring_main <- function(data,
     out_period[[perf_2_name]] = perf_2
     out_period[["DRIFT_AUC"]] = l_drift_auc
     out_period[["DRIFT_MATTHEWWS"]] = l_dirft_matt
-    
+    df_imp <- res_drift$importance$importance
+    df_imp <- data.table(VARIABLES = row.names(df_imp), IMPORTANCE = df_imp$Overall)
+    out_period_drift <- cbind(out_period_drift, df_imp)
     
     if(kind_target == "factor"){
       pred_test <- predict(model, agg_period_raw[, -c("Customer.ID", "VAR_REP", "YEAR")], type="prob")[,2]
@@ -141,13 +146,18 @@ monitoring_main <- function(data,
     }
     
     out = rbind(out, out_period)
+    out_drift = rbind(out_drift, out_period_drift)
   }
-  return(out)
+  return(list(out, out_drift))
 }
 
 scores = monitoring_main(data, train_6M[, -c("Customer.ID", "VAR_REP", "YEAR")], "2011-01-01", "2011-12-31", rf_6M$rf)
+scores_metriques = scores[[1]]
+scores_imp = scores[[2]]
 # write.csv(scores, file="/home/mmasson/data/mlops-wbr/save_output_1207.csv")
 # scores = read.csv("/home/mmasson/data/mlops-wbr/save_output_1207.csv")
+
+write.csv(scores_imp, file="/home/ngirard/Webinaire_MLOPS/data/save_output_importance_1208.csv", row.names = FALSE)
  
 
 

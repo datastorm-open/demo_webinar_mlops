@@ -42,7 +42,7 @@ drift_score <- function(X_train, X_test){
   pred_drift <- predict(rf, df_drift[, -c("Y_DRIFTSCORE")], type="prob")[, 2]
   matthews_score <- mccr::mccr(df_drift$Y_DRIFTSCORE, ifelse(pred_drift >= 0.5, 1, 0))
   auc_drift <- auc(df_drift$Y_DRIFTSCORE, pred_drift)
-  return(list(matthews=matthews_score, auc=auc_drift))
+  return(list(matthews=matthews_score, auc=auc_drift, importance=varImp(rf, scale=FALSE)))
 }
 
 

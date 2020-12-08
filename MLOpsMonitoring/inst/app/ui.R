@@ -1,8 +1,17 @@
 sidebar <- dashboardSidebar(
+  # sidebarMenu(id = "sidebar",
+  #   menuItem("Suivi des ventes", tabName = "features", icon = icon("cart-arrow-down")),
+  #   menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line")),
+  #   menuItem("Stabilité des inputs", tabName = "driftscore", icon = icon("chart-line"))
+  # )
   sidebarMenu(id = "sidebar",
-    menuItem("Suivi des ventes", tabName = "features", icon = icon("cart-arrow-down")),
-    menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line")),
-    menuItem("Stabilité des inputs", tabName = "driftscore", icon = icon("chart-line"))
+              # menuItem("Suivi des ventes", tabName = "features", icon = icon("cart-arrow-down")),
+              menuItem("Stabilité des inputs", tabName = "stabinputs", icon = icon("chart-line"), 
+                       menuItem("Indicateurs univariés", 
+                                tabName = "features", icon = icon("cart-arrow-down")), 
+                       menuItem("Indicateurs globaux", 
+                                tabName = "driftscore", icon = icon("chart-line"))),
+              menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line"))
   )
   # ,
   # conditionalPanel(condition = "document.getElementsByClassName('sidebar-menu')[0].children[0].className=='active'",
