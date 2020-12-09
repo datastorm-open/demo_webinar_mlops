@@ -120,8 +120,8 @@ body{
   border-bottom: 4px solid #420d09;
 }
 
-
 .navbar-custom-menu{
+  height: 50px;
   margin-right:150px;
 }
 
@@ -140,6 +140,17 @@ body{
   display:none !important;
   background-color: #FFF !important;
   color: #404040 !important;
+}
+
+.sidebar-toggle:click {
+  display:none !important;
+  background-color: #FFF !important;
+  color: #404040 !important;
+}
+
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a {
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .skin-blue .main-header .navbar:hover{

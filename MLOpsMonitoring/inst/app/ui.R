@@ -24,48 +24,32 @@ sidebar <- dashboardSidebar(
 )
 
 header <- dashboardHeader(title = "Webinaire MLOps",
-                          dropdownMenu(type = "notifications",
-                                       headerText = "Alerte monitoring",
-                                       notificationItem(
-                                         text = "TODO",
-                                         icon("users"),
-                                         status = "warning"
-                                       ),
-                                       notificationItem(
-                                         text = "TODO",
-                                         icon("truck"),
-                                         status = "warning"
-                                       ),
-                                       notificationItem(
-                                         text = "Server load at 86%",
-                                         icon = icon("exclamation-triangle"),
-                                         status = "warning"
-                                       )
-                          ))
+                          dropdownMenuOutput("alerts"))
 
 body <- dashboardBody(
-  
+  useShinyjs(),
   tags$link(rel="stylesheet", type="text/css", href="css/style.css"),
   tags$script(src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"),
   
   img(src="img/logoDS.png", class="ribbon", style="margin-right: 1.3cm;cm;margin-top: 0.2cm;margin-bottom: 0.1cm;height: 38px"),
   
   div(style="position:relative; top:-20px;background-color:#fff;padding:20px;box-shadow: 0 10px 6px -6px #999;z-index:5;", 
-      # sliderInput("t",
-      #             "Nous sommes le :",
-      #             min = as.Date("2011-01-01","%Y-%m-%d"),
-      #             max = as.Date("2012-01-01","%Y-%m-%d"),
-      #             value=as.Date("2011-03-01"),
-      #             timeFormat="%Y-%m-%d", width="100%")
+      sliderInput("t",
+                  "Nous sommes le :",
+                  min = as.Date("2010-09-01","%Y-%m-%d"),
+                  max = as.Date("2012-01-01","%Y-%m-%d"),
+                  value=as.Date("2010-11-27"),
+                  timeFormat="%Y-%m-%d", width="100%")
+  ),
   
   div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",
-    br(),
-    tabItems(
-      tabItem(tabName = "features", source("src/ui/features_ui.R", local = T)$value),
-      tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
-      tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value),
-      tabItem(tabName = "scoredistrib", source("src/ui/scoresdistrib_ui.R", local = T)$value)
-    )
+      br(),
+      tabItems(
+        tabItem(tabName = "features", source("src/ui/features_ui.R", local = T)$value),
+        tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
+        tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value),
+        tabItem(tabName = "scoredistrib", source("src/ui/scoresdistrib_ui.R", local = T)$value)
+      )
   )
 )
 
