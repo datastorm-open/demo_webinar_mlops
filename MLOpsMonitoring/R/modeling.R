@@ -148,3 +148,135 @@ accuracy <- function(actual, pred,  best=FALSE, threshold=0.5){
     return(acc@y.values[[1]][which(acc@x.values[[1]]==threshold)])
   }
 }
+
+
+#' monitoring_main
+#'
+#' @return a list of a data.table with scores, and a list of data.table corresponding to each features for each months
+#'
+#' @export
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#' }
+#'
+monitoring_main <- function(data,
+                            X_train,
+                            start,
+                            end,
+                            model,
+                            kind_target= "factor", 
+                            kind_agregates="cumulative",
+                            depth_agregats=c("M-6"),
+                            compute_drift = TRUE,
+                            compute_perf_globale=TRUE,
+                            delay_update = "month",
+                            date_format = "%Y-%m-%d"){
+  
+  scores = data.table()
+  features_batch = list()
+  start = as.Date(start, origin="1970-01-01")
+  end = as.Date(end, origin="1970-01-01") 
+  for(TARGET_start in seq.Date(from = start, to=end, by=delay_update)){
+    TARGET_start = as.Date(TARGET_start, origin="1970-01-01")
+    TARGET_end = TARGET_start + base::months(1)
+    scores_period = data.table(START = TARGET_start, END = TARGET_end)
+    
+    agg_period_raw <- MLOpsMonitoring::create_features_on_period(data, TARGET_start, TARGET_end, depth_agregats, kind_agregates)
+    features_batch[[as.character(TARGET_start)]] = agg_period_raw
+    
+    # Predict
+    y_pred <- agg_period_raw$VAR_REP
+    X_pred <- agg_period_raw[, -c("Customer.ID", "VAR_REP", "YEAR")]
+    if(kind_target == "factor"){
+      pred_test <- pred_validation <- predict(model, X_pred, type="prob")[, 2]
+      
+      scores_period$AUC_GLOBAL = auc(actual = y_pred, pred = pred_validation)
+      scores_period$ACC_GLOBAL = accuracy(actual = y_pred, pred = pred_validation, best=TRUE)$acc
+      scores_period$Kappa = cohen.kappa(data.table("pred"=as.double(pred_test>.5), "real"=y_pred))$kappa
+      scores_period$LogLoss =  LogLoss(pred_test, y_pred)
+      
+      for(size in c(100,200)){
+        scores_period[[paste0("TauxAchat-TOP-",size)]] = mean(as.logical(y_pred[order(pred_test,decreasing = TRUE)[1:size]]))
+      }
+      
+      for(size in c(5700,5800)){
+        scores_period[[paste0("TauxAchat-DOWN-",size)]] = mean(as.logical(y_pred[order(pred_test)[1:size]]))
+      }
+      
+    }
+    else if(kind_target == "amount"){
+      pred_validation <- predict(model, X_pred)
+      scores_period$RMSE_GLOBAL = Metrics::rmse(actual = y_pred, predicted = pred_validation)
+      scores_period$MAE_GLOBAL = Metrics::mae(actual = y_pred, predicted = pred_validation)
+    }
+    else{
+      stop("kind_target soit factor soit amount")
+    }
+    
+    res_drift <- drift_score(X_train[,-c("MONTH")], X_pred[,-c("MONTH")])
+    scores_period$DRIFT_AUC = res_drift$auc
+    scores_period$DRIFT_MATTHEWWS = res_drift$matthews
+    
+    scores = rbind(scores, scores_period)
+  }
+  return(list(scores=scores, features_batch=features_batch))
+}
+
+
+#' add_selected_but_no_bought
+#'
+#' @return a new dataset
+#'
+#' @export
+#'
+#' @examples 
+#' \dontrun{
+#' TODO
+#' }
+#'
+add_selected_but_no_bought <- function(data, from, to, by, min_customer=500, max_customer=1000, odd_new_customer=5, mu_sku=30, sigma_sku=20, mu_qtty=30, sigma_qtty=20){
+  months_list = seq.Date(from, to, by)
+  data_with_fake = as.data.table(copy(data)) ## data.table that will be output
+  list_of_sku = unique(data[,c("StockCode", "Description", "Price")])
+  
+  # List of customers that has not bought after months_list[1]
+  # Create new customers
+  real_customers_no_bough = setdiff(unique(data$Customer.ID), data[InvoiceDate>as.Date(months_list[1], origin="1970-01-01"), unique(Customer.ID)])
+  new_customers = 20000:round(20000+odd_new_customer*length(real_customers_no_bough))
+  customers = c(real_customers_no_bough, new_customers)
+  
+  # Select a few customers for each month
+  n_by_month = round(runif(length(months_list), min_customer, max_customer))
+  sample_customers_by_month = lapply(n_by_month, function(size,x){sample(x, size)}, x=customers)
+  
+  for(idx in 1:length(months_list)){
+    customers = data.table("id" = sample_customers_by_month[[idx]],
+                           "n" = abs(round(rnorm(n_by_month[idx], mu_sku, sigma_sku)))+1)
+    month_start = months_list[idx]
+    
+    new_data = do.call(rbind, apply(customers, 1 , function(x, sku, start_month){
+      id=x[[1]]
+      n=x[[2]]
+      # pick a random number of baskets and choose ids for baskets
+      nb_cmd = round(runif(1,1,10))
+      ids_cmd = paste0("PANIER", round(runif(nb_cmd, 50000,60000)))
+      # pick a date for each basket
+      date_cmd = start_month + round(runif(nb_cmd,1,30))
+      names(date_cmd) = ids_cmd
+      # select randomly products
+      out=sku[runif(n,1,nrow(sku)-1),]
+      # add metadata
+      out[["Customer.ID"]]=id
+      out[["Quantity"]] = rnorm(n, mu_qtty, sigma_qtty)
+      out[["Country"]] = "NEWDATA"
+      out[["Invoice"]] = sample(ids_cmd, n, replace = T)
+      out[["InvoiceDate"]] = date_cmd[out[["Invoice"]]]
+      return(out)
+    }, sku=list_of_sku, start_month=month_start))
+    
+    data_with_fake = rbind(data_with_fake, new_data)
+  }
+  return(data_with_fake)
+}

@@ -44,6 +44,11 @@ body{
   font-weight: bold;
 }
 
+.skin-blue .sidebar-menu > li > .treeview-menu {
+  background: #420d09 !important;
+  border-right: 2px solid !important;
+}
+
 .skin-blue .main-header .navbar .nav > li > a {
   color: #420d09;
   border-bottom: 4px solid #FFF;
