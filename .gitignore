@@ -6,3 +6,6 @@
 .ipynb_checkpoints/
 *.Rproj
 *.tar.gz
+*.RDS
+*.output
+*.out
