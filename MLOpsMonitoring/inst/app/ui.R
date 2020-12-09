@@ -11,7 +11,10 @@ sidebar <- dashboardSidebar(
                                 tabName = "features", icon = icon("cart-arrow-down")), 
                        menuItem("Indicateurs globaux", 
                                 tabName = "driftscore", icon = icon("chart-line"))),
-              menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line"))
+              menuItem("Etat de santé du modèle", tabName = "stabinputs", icon = icon("first-aid"), 
+                       menuItem("Performance du modèle", tabName = "modelperf", icon = icon("chart-line")), 
+                       menuItem("Indicateurs scores", tabName = "scoredistrib", icon = icon("chart-line"))
+                       )
   )
   # ,
   # conditionalPanel(condition = "document.getElementsByClassName('sidebar-menu')[0].children[0].className=='active'",
@@ -48,20 +51,20 @@ body <- dashboardBody(
   img(src="img/logoDS.png", class="ribbon", style="margin-right: 1.3cm;cm;margin-top: 0.2cm;margin-bottom: 0.1cm;height: 38px"),
   
   div(style="position:relative; top:-20px;background-color:#fff;padding:20px;box-shadow: 0 10px 6px -6px #999;z-index:5;", 
-      sliderInput("t",
-                  "Nous sommes le :",
-                  min = as.Date("2011-01-01","%Y-%m-%d"),
-                  max = as.Date("2012-01-01","%Y-%m-%d"),
-                  value=as.Date("2011-03-01"),
-                  timeFormat="%Y-%m-%d", width="100%")
-      ),
+      # sliderInput("t",
+      #             "Nous sommes le :",
+      #             min = as.Date("2011-01-01","%Y-%m-%d"),
+      #             max = as.Date("2012-01-01","%Y-%m-%d"),
+      #             value=as.Date("2011-03-01"),
+      #             timeFormat="%Y-%m-%d", width="100%")
   
   div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",
     br(),
     tabItems(
       tabItem(tabName = "features", source("src/ui/features_ui.R", local = T)$value),
       tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
-      tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value)
+      tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value),
+      tabItem(tabName = "scoredistrib", source("src/ui/scoresdistrib_ui.R", local = T)$value)
     )
   )
 )

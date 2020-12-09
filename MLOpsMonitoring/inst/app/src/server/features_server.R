@@ -55,3 +55,24 @@ output$density <- renderAmCharts({
     amLines(chart,y=dist_bef$y, type="l", col="black", title="Données d'entraînement") 
   }
 })
+
+output$stats <- renderDataTable({
+  if(display_density() && !is.null(input$feature) && input$feature!=""){
+    test <- latest_batch()[,c(input$feature)]
+    train <- features_train[[input$feature]]
+    stats_train <- c(min(train), quantile(train, 0.05), 
+                     quantile(train, 0.25), median(train), mean(train), 
+                     quantile(train, 0.75), quantile(train, 0.95), max(train))
+    stats_test <- c(min(test), quantile(test, 0.05), 
+                     quantile(test, 0.25), median(test), mean(test), 
+                     quantile(test, 0.75), quantile(test, 0.95), max(test))
+    dt_stats <- data.table(TRAIN = round(stats_train, 2), LAST_BATCH = round(stats_test, 2))
+    DT::datatable(dt_stats, 
+                  options = list(dom = 't', autoWidth = FALSE), rownames = c("min", "Quantile 0.05", "Quantile 0.25", 
+                                                          "médiane", "moyenne", 
+                                                          "Quantile 0.75", "Quantile 0.95", "max"), 
+                  colnames = c("Données d'entrainement", "Dernier batch"), 
+                  caption = input$feature, 
+                  width = 50)
+  }
+})

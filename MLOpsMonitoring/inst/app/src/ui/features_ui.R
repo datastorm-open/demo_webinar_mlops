@@ -11,6 +11,9 @@ fluidPage(
                    fluidRow(
                      box(shinycssloaders::withSpinner(amChartsOutput("density")), title = "Densités"), 
                      box(shinycssloaders::withSpinner(amChartsOutput("qqplot")), title = "QQPlot")
+                   ), 
+                   fluidRow(
+                     box(shinycssloaders::withSpinner(DTOutput("stats")), title = "Quelques statistiques", width = 12)
                    )
   )
 )

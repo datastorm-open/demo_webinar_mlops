@@ -2,6 +2,8 @@ library(MLOpsMonitoring)
 
 data  <- MLOpsMonitoring::import_dataset("/home/ngirard/Webinaire_MLOPS/data/uk-retailer-ii.xlsx")
 
+write.csv(data, file="/home/ngirard/Webinaire_MLOPS/data/data_1209.csv")
+
 train_6M <- MLOpsMonitoring::create_features_on_period(data, 
                                                        start_rep=as.Date("2010-07-01"), 
                                                        end_rep=as.Date("2010-07-31"),
@@ -21,8 +23,17 @@ mnt <- MLOpsMonitoring::monitoring_main(data_drifted,
                                         train_6M[, -c("Customer.ID", "VAR_REP", "YEAR")], 
                                         "2010-08-01", "2011-12-31", rf_6M$rf)
 
+
 # write.csv(mnt$scores, file="/home/mmasson/data/mlops-wbr/save_output_1208.csv")
 # scores = read.csv("/home/mmasson/data/mlops-wbr/save_output_1208.csv")
+
+write.csv(mnt$scores, file="/home/ngirard/Webinaire_MLOPS/data/save_output_scores_1209.csv", row.names = FALSE)
+write.csv(mnt$drift_imp, file="/home/ngirard/Webinaire_MLOPS/data/save_output_drift_imp_1209.csv", row.names = FALSE)
+write.csv(mnt$predictions, file="/home/ngirard/Webinaire_MLOPS/data/save_output_predictions_1209.csv", row.names = FALSE)
+
+# Statistiques descriptives:
+train_6M[, me]
+
 
 # for(a in names(mnt$features_batch)){
 #   write.csv(mnt$features_batch[[a]],

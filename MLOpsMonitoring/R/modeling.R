@@ -176,12 +176,18 @@ monitoring_main <- function(data,
   
   scores = data.table()
   features_batch = list()
+  drift_imp = data.table()
+  predictions = data.table()
   start = as.Date(start, origin="1970-01-01")
   end = as.Date(end, origin="1970-01-01") 
   for(TARGET_start in seq.Date(from = start, to=end, by=delay_update)){
     TARGET_start = as.Date(TARGET_start, origin="1970-01-01")
     TARGET_end = TARGET_start + base::months(1)
     scores_period = data.table(START = TARGET_start, END = TARGET_end)
+    drift_imp_period = data.table(START = c(TARGET_start,TARGET_start),
+                                  END = c(TARGET_end,TARGET_end))
+    predictions_period = data.table(START = c(TARGET_start,TARGET_start),
+                                  END = c(TARGET_end,TARGET_end))
     
     agg_period_raw <- MLOpsMonitoring::create_features_on_period(data, TARGET_start, TARGET_end, depth_agregats, kind_agregates)
     features_batch[[as.character(TARGET_start)]] = agg_period_raw
@@ -215,13 +221,20 @@ monitoring_main <- function(data,
       stop("kind_target soit factor soit amount")
     }
     
+    predictions_period = cbind(predictions_period, data.table(PRED = pred_validation, ACTUAL=y_pred))
+    
     res_drift <- drift_score(X_train[,-c("MONTH")], X_pred[,-c("MONTH")])
     scores_period$DRIFT_AUC = res_drift$auc
     scores_period$DRIFT_MATTHEWWS = res_drift$matthews
+    df_imp <- res_drift$importance$importance
+    df_imp <- data.table(VARIABLES = row.names(df_imp), IMPORTANCE = df_imp$Overall)
+    drift_imp_period <- cbind(drift_imp_period, df_imp)
     
     scores = rbind(scores, scores_period)
+    drift_imp = rbind(drift_imp, drift_imp_period)
+    predictions = rbind(predictions, predictions_period)
   }
-  return(list(scores=scores, features_batch=features_batch))
+  return(list(scores=scores, features_batch=features_batch, drift_imp=drift_imp, predictions=predictions))
 }
 
 
