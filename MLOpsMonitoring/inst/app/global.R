@@ -8,6 +8,7 @@ require(openxlsx)
 require(rAmCharts)
 require(MLmetrics)
 require(changepoint)
+require(DT)
 
 dev = TRUE
 
@@ -16,7 +17,13 @@ scores$cheatcode = c(rep(5, nrow(scores)/2), rep(9, 1+nrow(scores)/2))
 scores$START = as.POSIXct.Date(as.Date(scores$START))
 scores$END = as.POSIXct.Date(as.Date(scores$END))
 
-drift_imp <- as.data.table(read.csv("/home/ngirard/Webinaire_MLOPS/data/save_output_importance_1208.csv"))
+# Importance des variables (drift score)
+drift_imp <- as.data.table(read.csv("/home/ngirard/Webinaire_MLOPS/data/save_output_drift_imp_1209.csv"))
+drift_imp[, X := NULL]
+
+# Predictions
+predictions <- as.data.table(read.csv("/home/ngirard/Webinaire_MLOPS/data/save_output_predictions_1209.csv"))
+predictions[, X := NULL]
 
 features_train = as.data.table(read.csv(paste0("/home/mmasson/data/mlops-wbr/save_features_train.csv")))
 features_batch = list()
