@@ -39,7 +39,7 @@ checkUp <- function(scores){
   }
   
   row=scores[nrow(scores)]
-  if(row$Kappa<.3 | row$AUC_GLOBAL<.6 | row$ACC_GLOBAL<.3 | row$TauxAchat.TOP.100<.7 | row$LogLoss>3){
+  if(row$Kappa<.2 | row$AUC_GLOBAL<.6 | row$ACC_GLOBAL<.3 | row$TauxAchat.TOP.100<.7 | row$LogLoss>3){
     alerts$model_perf = notificationItem(
       text = "Les performances du modèle sont mauvaises",
       icon("users"),

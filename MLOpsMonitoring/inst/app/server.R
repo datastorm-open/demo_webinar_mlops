@@ -19,21 +19,22 @@ shinyServer(function(input, output, session) {
   scores_at_t <- reactive({scores[END<=input$t,]})
   
   # ALERTING SYSTEM
+  alerts <- reactiveValues(datadrift=NULL, model_perf=NULL, km_features=NULL)
   observe({
     checkUp(scores_at_t())
-  })
-  alerts <- reactiveValues(datadrift=NULL, model_perf=NULL, km_features=NULL)
-  output$alerts <- renderMenu({
-    ntfs = reactiveValuesToList(alerts)
-    print(lapply(ntfs, is.null))
-    if(length(ntfs)>0){
-      dropdownMenu(type = "notifications", .list = ntfs[!as.logical(lapply(ntfs, is.null))])
-    }else{
-      NULL
+    if(any(!as.logical(lapply(reactiveValuesToList(alerts), is.null)))){
+      output$alerts <- renderMenu({
+        ntfs = reactiveValuesToList(alerts)
+        dropdownMenu(type = "notifications", .list = ntfs[!as.logical(lapply(ntfs, is.null))])
+      })
     }
+    runjs(paste0('document.getElementsByClassName("dropdown notifications-menu")[0].style.display=',
+                 ifelse(any(!as.logical(lapply(reactiveValuesToList(alerts), is.null))),'"block"','"none"')))
   })
+
   
   source("src/server/features_server.R", local = T)
   source("src/server/modelperf_server.R", local = T)
   source("src/server/driftscore_server.R", local = T)
+  
 })

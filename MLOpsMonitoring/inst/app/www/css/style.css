@@ -120,8 +120,8 @@ body{
   border-bottom: 4px solid #420d09;
 }
 
-
 .navbar-custom-menu{
+  height: 50px;
   margin-right:150px;
 }
 
