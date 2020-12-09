@@ -12,6 +12,15 @@ require(changepoint)
 
 dev = TRUE
 
+threshold = list("AUC" = .6,
+              "ACC" = .6,
+              "Kappa" = .2,
+              "TauxAch" = .7,
+              "LogLoss" = 3, 
+              "Drift_AUC" = .7,
+              "Drift_Matt" = .5)
+
+
 scores = as.data.table(read.csv("/home/mmasson/data/mlops-wbr/save_output_1208.csv"))
 scores$cheatcode = c(rep(5, nrow(scores)/2), rep(9, 1+nrow(scores)/2))
 scores$START = as.POSIXct.Date(as.Date(scores$START))

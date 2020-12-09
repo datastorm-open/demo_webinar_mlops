@@ -21,7 +21,7 @@ shinyServer(function(input, output, session) {
   # ALERTING SYSTEM
   alerts <- reactiveValues(datadrift=NULL, model_perf=NULL, km_features=NULL)
   observe({
-    checkUp(scores_at_t())
+    checkUp(scores_at_t(), threshold)
     if(any(!as.logical(lapply(reactiveValuesToList(alerts), is.null)))){
       output$alerts <- renderMenu({
         ntfs = reactiveValuesToList(alerts)
