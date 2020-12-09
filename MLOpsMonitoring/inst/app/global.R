@@ -1,5 +1,6 @@
 rm(list=ls())
 require(shiny)
+require(shinyjs)
 require(shinydashboard)
 require(shinyWidgets)
 require(shinymanager)
@@ -27,22 +28,6 @@ for(TARGET_start in seq.Date(from=as.Date("2011-01-01", origin="1970-01-01"), to
 }
 
 features = setdiff(colnames(features_train), c("X", "Customer.ID", "VAR_REP", "MONTH", "YEAR"))
-distrib_comparison <- function(train, list_of_datasets, features, threshold=0.05, verbose=T){
-  options(warn=ifelse(verbose,0,-1))
-  kolma_test=data.table()
-  for(var in features){
-    tmp = c()
-    for(elem in names(list_of_datasets)){
-      tmp = c(tmp, ks.test(train[[var]], list_of_datasets[[elem]][[var]])$p.value)   
-    }
-    tmp=data.table(tmp)
-    names(tmp)=var
-    kolma_test=cbind(kolma_test, tmp)
-  }
-  rownames(kolma_test) = names(list_of_datasets)
-  options(warn=0)
-  return(kolma_test>threshold)
-}
 # is_similar = distrib_comparison(features_train, features_batch, features, verbose=F)
 
 

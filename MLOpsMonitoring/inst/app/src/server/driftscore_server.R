@@ -1,5 +1,7 @@
 output$drift_auc <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "DRIFT_AUC", "DRIFT AUC", .6)})
+
 output$drift_matth <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "DRIFT_MATTHEWWS", "DRIFT MATTHEWS", .6)})
+
 output$drift_imp <- renderAmCharts({
   start_month_input <- input$t
   day(start_month_input) <- 1

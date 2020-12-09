@@ -21,24 +21,7 @@ sidebar <- dashboardSidebar(
 )
 
 header <- dashboardHeader(title = "Webinaire MLOps",
-                          dropdownMenu(type = "notifications",
-                                       headerText = "Alerte monitoring",
-                                       notificationItem(
-                                         text = "TODO",
-                                         icon("users"),
-                                         status = "warning"
-                                       ),
-                                       notificationItem(
-                                         text = "TODO",
-                                         icon("truck"),
-                                         status = "warning"
-                                       ),
-                                       notificationItem(
-                                         text = "Server load at 86%",
-                                         icon = icon("exclamation-triangle"),
-                                         status = "warning"
-                                       )
-                          ))
+                          dropdownMenuOutput("alerts"))
 
 body <- dashboardBody(
   
@@ -54,15 +37,15 @@ body <- dashboardBody(
                   max = as.Date("2012-01-01","%Y-%m-%d"),
                   value=as.Date("2011-03-01"),
                   timeFormat="%Y-%m-%d", width="100%")
-      ),
+  ),
   
   div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",
-    br(),
-    tabItems(
-      tabItem(tabName = "features", source("src/ui/features_ui.R", local = T)$value),
-      tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
-      tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value)
-    )
+      br(),
+      tabItems(
+        tabItem(tabName = "features", source("src/ui/features_ui.R", local = T)$value),
+        tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
+        tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value)
+      )
   )
 )
 
