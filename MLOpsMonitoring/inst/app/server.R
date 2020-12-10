@@ -36,7 +36,10 @@ shinyServer(function(input, output, session) {
     if(any(!as.logical(lapply(reactiveValuesToList(alerts), is.null)))){
       output$alerts <- renderMenu({
         ntfs = reactiveValuesToList(alerts)
-        dropdownMenu(type = "notifications", .list = ntfs[!as.logical(lapply(ntfs, is.null))])
+        dropdownMenu(type = "notifications", 
+                     icon = icon(ifelse(is.null(alerts$model_perf), "bell","exclamation-triangle")),
+                     headerText = "L'APP VOUS A ENVOYE LES MAILS SUIVANTS", 
+                     .list = ntfs[!as.logical(lapply(ntfs, is.null))])
       })
     }
     runjs(paste0('document.getElementsByClassName("dropdown notifications-menu")[0].style.display=',

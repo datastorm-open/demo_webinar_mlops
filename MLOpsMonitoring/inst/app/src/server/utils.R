@@ -59,7 +59,7 @@ checkUp <- function(scores, threshold){
     alerts$km_features = notificationItem(
       text = "Les données en entrée ne correspondent pas totalement à celles de la période d'apprentissage",
       icon("users"),
-      status = "warning"
+      status = "primary"
     )
   }else{
     alerts$km_features = NULL
@@ -69,7 +69,7 @@ checkUp <- function(scores, threshold){
   if(row$Kappa<threshold$Kappa | row$AUC_GLOBAL<threshold$AUC | row$ACC_GLOBAL<threshold$ACC | row$TauxAchat.TOP.100<threshold$TauxAch | row$LogLoss>threshold$LogLoss){
     alerts$model_perf = notificationItem(
       text = "Les performances du modèle sont mauvaises",
-      icon("users"),
+      icon("car-crash"),
       status = "danger"
     )    
   }else{
@@ -79,8 +79,8 @@ checkUp <- function(scores, threshold){
   if(row$DRIFT_AUC > threshold$Drift_AUC | row$DRIFT_MATTHEWWS > threshold$Drift_Matt){
     alerts$datadrift = notificationItem(
       text = "Un data drift a été détecté",
-      icon("users"),
-      status = "danger"
+      icon("chart-line"),
+      status = "warning"
     )    
   }else{
     alerts$datadrift = NULL
