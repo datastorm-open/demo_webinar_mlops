@@ -166,12 +166,13 @@ body{
 .irs-bar {
 border-top: 1px solid #420d09;
 border-bottom: 1px solid #420d09;
-background: #420d09;
+background: #AAAAAA;
 }
 
 .irs-bar-edge{
   border:1px solid #420d09;
-  background: #420d09;
+  border-right: 0px solid #420d09;
+  background: #AAAAAA;
 }
 
 .info-box-text{
