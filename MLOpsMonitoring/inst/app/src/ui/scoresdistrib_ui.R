@@ -1,11 +1,19 @@
 fluidPage(
   fluidRow(
     box(shinycssloaders::withSpinner(amChartsOutput("density_scores")), 
-        title = "Comparaison des densités des scores", height = 450), 
+        title = "Comparaison des densités des scores", height = 475), 
+    # box(title="Comparaison statistique", 
+    #     fluidRow(
+    #       column(12, 
+    #              infoBoxOutput("rmse_diag", width = 12),
+    #              fluidRow(amChartsOutput("qqplot_scores", height = "300px", width="450px"))
+    #       )
+    #     ), height = 475)
     box(title="Comparaison statistique", 
-        fluidRow(
-          infoBoxOutput("rmse_diag", width = 12),
-          fluidRow(amChartsOutput("qqplot_scores", height = "300px", width="400px"))
-        ), height = 450)
+        column(12,
+               infoBoxOutput("rmse_diag", width = 12),
+               amChartsOutput("qqplot_scores", height = "300px", width="500px"), 
+               align="center"),
+        , height = 475)
   )
 )

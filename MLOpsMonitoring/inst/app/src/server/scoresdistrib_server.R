@@ -37,7 +37,7 @@ output$rmse_diag <- renderInfoBox({
   dist_aft = quantile(scores_predictions_batch(), qtl)
   res_rmse <- round(Metrics::rmse(dist_bef, dist_aft), 3)
   infoBox("RMSE à la diagonale", res_rmse , color = ifelse(res_rmse < 0.05, "green", "orange"),
-          width = 12, icon=icon("thumbs-up"))
+          width = 12, icon=icon("not-equal"))
 })
 
 
