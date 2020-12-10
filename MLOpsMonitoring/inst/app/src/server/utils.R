@@ -81,6 +81,7 @@ checkUp <- function(scores, threshold){
   }
 }
 
+# Retourne les variables dont les distrib sont SIMILAIRES ! 
 distrib_comparison <- function(train, list_of_datasets, features, threshold=0.05, verbose=T){
   options(warn=ifelse(verbose,0,-1))
   kolma_test=data.table()
