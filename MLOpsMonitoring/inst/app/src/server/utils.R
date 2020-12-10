@@ -1,16 +1,18 @@
-makeMonitoringCharts <- function(dt, score, main, threshold, top=F){
+makeMonitoringCharts <- function(dt, score, main, threshold, date_drift=NULL, top=F){
   
-  if(score=="LogLoss"){
-    #browser()
+  if(score=="ACC_GLOBAL"){
+    #browser()    
   }
   
-  if(length(dt[[score]])>4){
+  if(!is.null(date_drift)){
+    chpts = date_drift
+  }else if(length(dt[[score]])>4){
     chpts = changepoint::cpt.meanvar(dt[[score]])@cpts
-    chpts = chpts[chpts<length(dt[[score]])-1]
+    chpts = dt$END[chpts+1]
+    chpts = chpts[!is.na(chpts)]
   }else{
     chpts = c()
   }
-  
   
   dt$alerting_threshold = threshold
   if(top && max(dt[[score]])>=threshold){
@@ -38,9 +40,9 @@ makeMonitoringCharts <- function(dt, score, main, threshold, top=F){
 
   charts@panels[[1]]$categoryAxis = rAmCharts::categoryAxis()
   if(length(chpts)>0){
-    for(rupt in chpts[1:(length(chpts)-1)]){
+    for(rupt in chpts){
       charts@panels[[1]]$categoryAxis = addGuide(charts@panels[[1]]$categoryAxis, 
-                                                 rAmCharts::guide(date = dt$END[rupt+1],
+                                                 rAmCharts::guide(date = rupt,
                                                                   lineColor = "#CC0000",
                                                                   lineAlpha = 1,
                                                                   dashLength = 2,

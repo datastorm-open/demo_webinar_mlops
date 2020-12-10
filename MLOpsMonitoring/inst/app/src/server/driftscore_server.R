@@ -1,6 +1,6 @@
-output$drift_auc <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "DRIFT_AUC", "DRIFT AUC", threshold$Drift_AUC, top=T)})
+output$drift_auc <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "DRIFT_AUC", "DRIFT AUC", threshold$Drift_AUC, date_drift=est_rupt_date(), top=T)})
 
-output$drift_matth <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "DRIFT_MATTHEWWS", "DRIFT MATTHEWS", threshold$Drift_Matt, top=T)})
+output$drift_matth <- renderAmCharts({makeMonitoringCharts(copy(scores_at_t()), "DRIFT_MATTHEWWS", "DRIFT MATTHEWS", threshold$Drift_Matt, date_drift=est_rupt_date(), top=T)})
 
 output$drift_imp <- renderAmCharts({
   start_month_input <- input$t

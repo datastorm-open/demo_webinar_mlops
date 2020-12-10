@@ -38,8 +38,10 @@ body <- dashboardBody(
                   "Observation du monitoring en date du :",
                   min = as.Date("2010-09-01","%Y-%m-%d"),
                   max = as.Date("2012-01-01","%Y-%m-%d"),
+                  step = 30, 
+                  #animate = T,
                   value=as.Date("2010-11-27"),
-                  timeFormat="%Y-%m-%d", width="100%")
+                  timeFormat="%Y-%m", width="100%")
   ),
   
   div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",

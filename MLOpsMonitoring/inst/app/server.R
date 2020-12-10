@@ -18,6 +18,12 @@ shinyServer(function(input, output, session) {
   last_batch_name <- reactive({min(names(features_batch)[names(features_batch)>=input$t])})
   scores_at_t <- reactive({scores[END<=input$t,]})
   
+  est_rupt_date <- reactive({
+    #predictions[changepoint::cpt.var(predictions[START<input$t]$PRED)@cpts[1], START]
+    predictions[changepoint::cpt.var(predictions[START<input$t]$HAVING_WRONG)@cpts[1], START]
+  })
+
+  # ADAPT HEADER TO DATE
   observe({
     if(input$t < as.Date("2011-03-01")){
       runjs('document.getElementsByClassName("js-irs-0")[0].children[2].style.background="#AAAAAA"')
