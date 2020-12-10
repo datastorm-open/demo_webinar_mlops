@@ -35,7 +35,7 @@ body <- dashboardBody(
   
   div(style="position:relative; top:-20px;background-color:#fff;padding:20px;box-shadow: 0 10px 6px -6px #999;z-index:5;", 
       sliderInput("t",
-                  "Nous sommes le :",
+                  "Observation du monitoring en date du :",
                   min = as.Date("2010-09-01","%Y-%m-%d"),
                   max = as.Date("2012-01-01","%Y-%m-%d"),
                   value=as.Date("2010-11-27"),

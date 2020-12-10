@@ -18,6 +18,17 @@ shinyServer(function(input, output, session) {
   last_batch_name <- reactive({min(names(features_batch)[names(features_batch)>=input$t])})
   scores_at_t <- reactive({scores[END<=input$t,]})
   
+  observe({
+    if(input$t < as.Date("2011-03-01")){
+      runjs('document.getElementsByClassName("js-irs-0")[0].children[2].style.background="#AAAAAA"')
+      runjs('document.getElementsByClassName("js-irs-0")[0].children[3].style.background="#AAAAAA"')
+    }else{
+      runjs('document.getElementsByClassName("js-irs-0")[0].children[2].style.background="#420d09"')
+      runjs('document.getElementsByClassName("js-irs-0")[0].children[3].style.background="#420d09"')
+      runjs('document.getElementsByClassName("js-irs-0")[0].children[0].children[5].firstChild.data += " (Drift)"')
+    }
+  })
+  
   # ALERTING SYSTEM
   alerts <- reactiveValues(datadrift=NULL, model_perf=NULL, km_features=NULL)
   observe({

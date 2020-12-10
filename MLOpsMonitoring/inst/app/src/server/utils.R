@@ -4,7 +4,13 @@ makeMonitoringCharts <- function(dt, score, main, threshold, top=F){
     #browser()
   }
   
-  chpts = changepoint::cpt.mean(dt[[score]])@cpts
+  if(length(dt[[score]])>4){
+    chpts = changepoint::cpt.meanvar(dt[[score]])@cpts
+    chpts = chpts[chpts<length(dt[[score]])-1]
+  }else{
+    chpts = c()
+  }
+  
   
   dt$alerting_threshold = threshold
   if(top && max(dt[[score]])>=threshold){
@@ -31,7 +37,7 @@ makeMonitoringCharts <- function(dt, score, main, threshold, top=F){
   
 
   charts@panels[[1]]$categoryAxis = rAmCharts::categoryAxis()
-  if(length(chpts)>1){
+  if(length(chpts)>0){
     for(rupt in chpts[1:(length(chpts)-1)]){
       charts@panels[[1]]$categoryAxis = addGuide(charts@panels[[1]]$categoryAxis, 
                                                  rAmCharts::guide(date = dt$END[rupt+1],
