@@ -53,7 +53,7 @@ body{
   color: #420d09;
   border-bottom: 4px solid #FFF;
   font-size: 17pt;
-  animation: text-shadow 1.5s ease-in-out infinite;
+  animation: text-shadow 3s ease-in-out infinite;
 }
 
 @keyframes text-shadow {
@@ -151,6 +151,7 @@ body{
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a {
   white-space: normal;
   word-wrap: break-word;
+  font-size: 12pt;
 }
 
 .skin-blue .main-header .navbar:hover{
