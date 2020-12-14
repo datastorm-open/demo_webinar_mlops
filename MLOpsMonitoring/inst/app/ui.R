@@ -43,6 +43,7 @@ body <- dashboardBody(
                   value=as.Date("2010-11-27"),
                   timeFormat="%Y-%m", width="100%")
   ),
+  tags$script("document.getElementsByClassName('control-label')[0].style['font-size']='13pt';"),
   
   div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",
       br(),
