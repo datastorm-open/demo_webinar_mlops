@@ -17,7 +17,7 @@ threshold = list("AUC" = .6,
               "ACC" = .6,
               "Kappa" = .2,
               "TauxAch" = .7,
-              "LogLoss" = 3, 
+              "LogLoss" = 3.5, 
               "Drift_AUC" = .7,
               "Drift_Matt" = .5)
 
