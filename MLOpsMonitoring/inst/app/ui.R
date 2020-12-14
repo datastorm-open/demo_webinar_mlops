@@ -6,6 +6,7 @@ sidebar <- dashboardSidebar(
   # )
   sidebarMenu(id = "sidebar",
               # menuItem("Suivi des ventes", tabName = "features", icon = icon("cart-arrow-down")),
+              menuItem("Synthèse", tabName = "synthese", icon=icon("tachometer-alt")),
               menuItem("Stabilité des inputs", tabName = "stabinputs", icon = icon("chart-line"), 
                        menuItem("Indicateurs univariés", 
                                 tabName = "features", icon = icon("cart-arrow-down")), 
@@ -42,12 +43,14 @@ body <- dashboardBody(
                   #animate = T,
                   value=as.Date("2010-11-27"),
                   timeFormat="%Y-%m", width="100%")
+
   ),
   tags$script("document.getElementsByClassName('control-label')[0].style['font-size']='13pt';"),
   
   div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",
       br(),
       tabItems(
+        tabItem(tabName = "synthese", source("src/ui/synthese_ui.R", local = T)$value),
         tabItem(tabName = "features", source("src/ui/features_ui.R", local = T)$value),
         tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
         tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value),
