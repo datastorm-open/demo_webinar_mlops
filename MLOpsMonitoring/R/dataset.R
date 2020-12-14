@@ -65,7 +65,9 @@ import_dataset <- function(path='/home/mmasson/data/mlops-wbr/uk-retailer-ii.xls
 }
 
 #' Create response variable : 0 if customer did not buy anything in targeted month, 1 if the it did.
+#' Response variable does not consider invoices PANIERXXXX. Those lines are not real orders. 
 #'
+#' @param data : \code{data.table}. A subset of retailer II dataset.
 #' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
 #' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
 #' 
@@ -91,6 +93,7 @@ create_var_reponse <- function(data, start_rep="2011-10-01", end_rep="2011-10-31
 
 #' Create response variable : amount of products purchased in the targeted month.
 #'
+#' @param data : \code{data.table}. A subset of retailer II dataset.
 #' @param start_rep : \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
 #' @param end_rep : \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)
 #' 
@@ -145,7 +148,7 @@ create_subset_data <- function(data, to="2011-10-01", window_months = 3){
 
 
 
-#' First part of features computing. Calcul le prix du panier moyen sur les 3 derniers mois à partir de end_rep (TO TRANSLATE)
+#' First part of features computing. Compute the average basket and other features.
 #'
 #' @param sub_data_agg : \code{data.table}. A subset of the complete dataset(Use create_subset_data)
 #' @param all_customers : \code{data.table}. List of all the considered customers.
@@ -364,7 +367,7 @@ keywords = c("CHRISTMAS", "UMBRELLA", "CARD", "MUG", "TEA", "BOTTLE", "BAG",
              "ORGANISER", "ERASER", "NECKL", "CLOCK", "LAMP", "STICKER", "COVER")
 
 
-#' Compute features on a rolling windows
+#' Find keywords onto the SKU labels.
 #'
 #' @param labels : \code{characters}. Characters to look patterns into.
 #' @param patterns : \code{characters} pretty obvious

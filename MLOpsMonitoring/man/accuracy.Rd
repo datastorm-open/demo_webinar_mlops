@@ -6,6 +6,15 @@
 \usage{
 accuracy(actual, pred, best = FALSE, threshold = 0.5)
 }
+\arguments{
+\item{actual}{: actual value of targets}
+
+\item{pred}{: prediction made by a model}
+
+\item{best}{: wthr. or not the function looks for the threshold that gives the best accuracy}
+
+\item{threshold}{: fixed value of threshold (needed if best==FALSE)}
+}
 \value{
 a list of a RF Object, AUC, predictions
 }

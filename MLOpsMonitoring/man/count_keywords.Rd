@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataset.R
 \name{count_keywords}
 \alias{count_keywords}
-\title{Compute features on a rolling windows}
+\title{Find keywords onto the SKU labels.}
 \usage{
 count_keywords(labels, patterns = keywords)
 }
@@ -15,7 +15,7 @@ count_keywords(labels, patterns = keywords)
 a list of (data.table, a coverage indicator, summary of keywords)
 }
 \description{
-Compute features on a rolling windows
+Find keywords onto the SKU labels.
 }
 \examples{
 \dontrun{

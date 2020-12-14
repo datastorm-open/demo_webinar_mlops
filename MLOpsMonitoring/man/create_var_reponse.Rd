@@ -2,11 +2,14 @@
 % Please edit documentation in R/dataset.R
 \name{create_var_reponse}
 \alias{create_var_reponse}
-\title{Create response variable : 0 if customer did not buy anything in targeted month, 1 if the it did.}
+\title{Create response variable : 0 if customer did not buy anything in targeted month, 1 if the it did.
+Response variable does not consider invoices PANIERXXXX. Those lines are not real orders.}
 \usage{
 create_var_reponse(data, start_rep = "2011-10-01", end_rep = "2011-10-31")
 }
 \arguments{
+\item{data}{: \code{data.table}. A subset of retailer II dataset.}
+
 \item{start_rep}{: \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)}
 
 \item{end_rep}{: \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)}
@@ -16,6 +19,7 @@ a data.table object
 }
 \description{
 Create response variable : 0 if customer did not buy anything in targeted month, 1 if the it did.
+Response variable does not consider invoices PANIERXXXX. Those lines are not real orders.
 }
 \examples{
 \dontrun{

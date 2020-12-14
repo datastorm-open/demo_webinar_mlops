@@ -2,7 +2,7 @@
 % Please edit documentation in R/modeling.R
 \name{monitoring_main}
 \alias{monitoring_main}
-\title{monitoring_main}
+\title{A wrapper that run model for each testing period, computes metrics (auc, accuracy, kappa, drift_auc, ...)}
 \usage{
 monitoring_main(
   data,
@@ -13,17 +13,36 @@ monitoring_main(
   kind_target = "factor",
   kind_agregates = "cumulative",
   depth_agregats = c("M-6"),
-  compute_drift = TRUE,
-  compute_perf_globale = TRUE,
   delay_update = "month",
   date_format = "\%Y-\%m-\%d"
 )
+}
+\arguments{
+\item{data}{: TODO}
+
+\item{X_train}{: TODO}
+
+\item{start}{: TODO}
+
+\item{end}{: TODO}
+
+\item{model}{: a model from caret (random forest, xgboost, ...)}
+
+\item{kind_target}{: default "factor",}
+
+\item{kind_agregates}{: default "cumulative"}
+
+\item{depth_agregats}{: default "M-6"}
+
+\item{delay_update}{: default "month",}
+
+\item{date_format}{: default "%Y-%m-%d"}
 }
 \value{
 a list of a data.table with scores, and a list of data.table corresponding to each features for each months
 }
 \description{
-monitoring_main
+A wrapper that run model for each testing period, computes metrics (auc, accuracy, kappa, drift_auc, ...)
 }
 \examples{
 \dontrun{

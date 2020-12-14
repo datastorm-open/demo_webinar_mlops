@@ -50,7 +50,11 @@ drift_score <- function(X_train, X_test){
 #' train and test data sets
 #'
 #' @param X_train : data.table, train data set
-#' @param start
+#' @param start : start of the period
+#' @param end : end of the period
+#' @param windows : see ?MLOpsMonitoring::create_features_on_period
+#' @param kind : see ?MLOpsMonitoring::create_features_on_period
+#' 
 #' @return list of performance indicators (of drift model)
 #' 
 #' @export

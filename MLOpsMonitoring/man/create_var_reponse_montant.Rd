@@ -11,6 +11,8 @@ create_var_reponse_montant(
 )
 }
 \arguments{
+\item{data}{: \code{data.table}. A subset of retailer II dataset.}
+
 \item{start_rep}{: \code{character}. Start of the targeted period. Character to be parsed as date (format YYYY-MM-DD)}
 
 \item{end_rep}{: \code{character}. End of the targeted period. Character to be parsed as date (format YYYY-MM-DD)}

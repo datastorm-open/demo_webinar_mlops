@@ -1,7 +1,9 @@
 #' Train a RandomForest model. Compute AUC.
 #'
 #' @param agg : \code{data.table}. Features and target.
-#' 
+#' @param print_rf : print random forest summary
+#' @param seed : seed number to control randomness
+#' @param rep_factor : TODO
 #' 
 #' @return a list of a RF Object, AUC, predictions
 #'
@@ -122,6 +124,11 @@ train_xgboost <- function(agg){
 
 #' accuracy
 #'
+#' @param actual : actual value of targets
+#' @param pred : prediction made by a model
+#' @param best : wthr. or not the function looks for the threshold that gives the best accuracy
+#' @param threshold : fixed value of threshold (needed if best==FALSE)
+#' 
 #' @return a list of a RF Object, AUC, predictions
 #'
 #' @export
@@ -150,7 +157,18 @@ accuracy <- function(actual, pred,  best=FALSE, threshold=0.5){
 }
 
 
-#' monitoring_main
+#' A wrapper that run model for each testing period, computes metrics (auc, accuracy, kappa, drift_auc, ...)
+#'
+#' @param data : TODO
+#' @param X_train : TODO
+#' @param start : TODO
+#' @param end : TODO
+#' @param model : a model from caret (random forest, xgboost, ...)
+#' @param kind_target : default "factor", 
+#' @param kind_agregates : default "cumulative"
+#' @param depth_agregats : default "M-6"
+#' @param delay_update : default "month",
+#' @param date_format : default "%Y-%m-%d"
 #'
 #' @return a list of a data.table with scores, and a list of data.table corresponding to each features for each months
 #'
@@ -169,8 +187,6 @@ monitoring_main <- function(data,
                             kind_target= "factor", 
                             kind_agregates="cumulative",
                             depth_agregats=c("M-6"),
-                            compute_drift = TRUE,
-                            compute_perf_globale=TRUE,
                             delay_update = "month",
                             date_format = "%Y-%m-%d"){
   
@@ -239,6 +255,18 @@ monitoring_main <- function(data,
 
 
 #' add_selected_but_no_bought
+#'
+#' @param data : a dataset in which we will add fake lines
+#' @param from : same as from in ?seq.Date
+#' @param to : same as to in ?seq.Date
+#' @param by : same as by in ?seq.Date
+#' @param min_customer : min number of customers the can be altered each month
+#' @param max_customer : max number of customers the can be altered each month
+#' @param odd_new_customer : inverse of probability to add a new customer rather than altering an existing one
+#' @param mu_sku : number of SKU by customer to be added follows rnorm(mu_sku, sigma_sku)
+#' @param sigma_sku : number of SKU by customer to be added follows a rnom(mu_sku, sigma_sku)
+#' @param mu_qtty : quantity added for each of SKU added follows rnorm(mu_qtty, sigma_qtty)
+#' @param sigma_qtty : quantity added for each of SKU added follows rnorm(mu_qtty, sigma_qtty)
 #'
 #' @return a new dataset
 #'

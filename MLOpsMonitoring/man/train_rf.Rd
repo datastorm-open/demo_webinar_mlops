@@ -8,6 +8,12 @@ train_rf(agg, print_rf = TRUE, seed = 28, rep_factor = TRUE)
 }
 \arguments{
 \item{agg}{: \code{data.table}. Features and target.}
+
+\item{print_rf}{: print random forest summary}
+
+\item{seed}{: seed number to control randomness}
+
+\item{rep_factor}{: TODO}
 }
 \value{
 a list of a RF Object, AUC, predictions

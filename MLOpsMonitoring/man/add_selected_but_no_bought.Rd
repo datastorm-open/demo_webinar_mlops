@@ -18,6 +18,29 @@ add_selected_but_no_bought(
   sigma_qtty = 20
 )
 }
+\arguments{
+\item{data}{: a dataset in which we will add fake lines}
+
+\item{from}{: same as from in ?seq.Date}
+
+\item{to}{: same as to in ?seq.Date}
+
+\item{by}{: same as by in ?seq.Date}
+
+\item{min_customer}{: min number of customers the can be altered each month}
+
+\item{max_customer}{: max number of customers the can be altered each month}
+
+\item{odd_new_customer}{: inverse of probability to add a new customer rather than altering an existing one}
+
+\item{mu_sku}{: number of SKU by customer to be added follows rnorm(mu_sku, sigma_sku)}
+
+\item{sigma_sku}{: number of SKU by customer to be added follows a rnom(mu_sku, sigma_sku)}
+
+\item{mu_qtty}{: quantity added for each of SKU added follows rnorm(mu_qtty, sigma_qtty)}
+
+\item{sigma_qtty}{: quantity added for each of SKU added follows rnorm(mu_qtty, sigma_qtty)}
+}
 \value{
 a new dataset
 }

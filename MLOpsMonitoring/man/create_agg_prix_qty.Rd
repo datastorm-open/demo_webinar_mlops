@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataset.R
 \name{create_agg_prix_qty}
 \alias{create_agg_prix_qty}
-\title{First part of features computing. Calcul le prix du panier moyen sur les 3 derniers mois à partir de end_rep (TO TRANSLATE)}
+\title{First part of features computing. Compute the average basket and other features.}
 \usage{
 create_agg_prix_qty(sub_data_agg, all_customers)
 }
@@ -15,7 +15,7 @@ create_agg_prix_qty(sub_data_agg, all_customers)
 a data.table object
 }
 \description{
-First part of features computing. Calcul le prix du panier moyen sur les 3 derniers mois à partir de end_rep (TO TRANSLATE)
+First part of features computing. Compute the average basket and other features.
 }
 \examples{
 \dontrun{
