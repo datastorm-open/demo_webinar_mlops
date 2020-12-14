@@ -49,7 +49,7 @@ add_selected_but_no_bought
 }
 \examples{
 \dontrun{
-TODO
+#TODO
 }
 
 }

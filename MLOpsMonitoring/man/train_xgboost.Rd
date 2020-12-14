@@ -2,7 +2,7 @@
 % Please edit documentation in R/modeling.R
 \name{train_xgboost}
 \alias{train_xgboost}
-\title{Train a RandomForest model. Compute AUC.}
+\title{Train a XGBoost model. Compute AUC.}
 \usage{
 train_xgboost(agg)
 }
@@ -10,10 +10,10 @@ train_xgboost(agg)
 \item{agg}{: \code{data.table}. Features and target.}
 }
 \value{
-a list of a RF Object, AUC, predictions
+a list of a XGBoost Object, AUC, predictions
 }
 \description{
-Train a RandomForest model. Compute AUC.
+Train a XGBoost model. Compute AUC.
 }
 \examples{
 \dontrun{

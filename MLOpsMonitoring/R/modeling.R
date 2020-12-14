@@ -16,7 +16,7 @@
 #' \dontrun{
 #' agg_4trim <- create_features_on_period(data, "2011-05-01", "2011-05-30", c("T-1", "T-2", "T-3", "T-4"), kind="lag")
 #' # Distribution of VAR_REP 
-#' agg_4trim[, .N/nrow(agg_4trim), VAR_REP]
+#' agg_4trim[,.N/nrow(agg_4trim),VAR_REP]
 #' # Train RF
 #' res_4trim <- train_rf(agg_4trim)
 #' # Importance
@@ -68,12 +68,12 @@ train_rf <- function(agg, print_rf=TRUE, seed=28, rep_factor=TRUE){
   
 }
 
-#' Train a RandomForest model. Compute AUC.
+#' Train a XGBoost model. Compute AUC.
 #'
 #' @param agg : \code{data.table}. Features and target.
 #' 
 #' 
-#' @return a list of a RF Object, AUC, predictions
+#' @return a list of a XGBoost Object, AUC, predictions
 #'
 #' @import data.table
 #' @import xgboost
@@ -164,14 +164,15 @@ accuracy <- function(actual, pred,  best=FALSE, threshold=0.5){
 #' @param start : TODO
 #' @param end : TODO
 #' @param model : a model from caret (random forest, xgboost, ...)
-#' @param kind_target : default "factor", 
-#' @param kind_agregates : default "cumulative"
-#' @param depth_agregats : default "M-6"
-#' @param delay_update : default "month",
-#' @param date_format : default "%Y-%m-%d"
+#' @param kind_target : default factor
+#' @param kind_agregates : default cumulative
+#' @param depth_agregats : default M-6
+#' @param delay_update : default month
+#' @param date_format : default \%Y-\%m-\%d
 #'
 #' @return a list of a data.table with scores, and a list of data.table corresponding to each features for each months
 #'
+#' @import data.table
 #' @export
 #'
 #' @examples 
@@ -274,7 +275,7 @@ monitoring_main <- function(data,
 #'
 #' @examples 
 #' \dontrun{
-#' TODO
+#' #TODO
 #' }
 #'
 add_selected_but_no_bought <- function(data, from, to, by, min_customer=500, max_customer=1000, odd_new_customer=5, mu_sku=30, sigma_sku=20, mu_qtty=30, sigma_qtty=20){

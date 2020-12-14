@@ -28,15 +28,15 @@ monitoring_main(
 
 \item{model}{: a model from caret (random forest, xgboost, ...)}
 
-\item{kind_target}{: default "factor",}
+\item{kind_target}{: default factor}
 
-\item{kind_agregates}{: default "cumulative"}
+\item{kind_agregates}{: default cumulative}
 
-\item{depth_agregats}{: default "M-6"}
+\item{depth_agregats}{: default M-6}
 
-\item{delay_update}{: default "month",}
+\item{delay_update}{: default month}
 
-\item{date_format}{: default "%Y-%m-%d"}
+\item{date_format}{: default \%Y-\%m-\%d}
 }
 \value{
 a list of a data.table with scores, and a list of data.table corresponding to each features for each months

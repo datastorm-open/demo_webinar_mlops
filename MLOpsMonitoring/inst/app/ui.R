@@ -60,20 +60,20 @@ body <- dashboardBody(
 )
 
 
-if(!dev){
-  secure_app(
-    dashboardPage(
-      header,
-      sidebar,
-      body), 
-    tags_top = tags$img(src = "img/logoDS.png", width = 200),
-    tags_bottom = tags$div(tags$p("MLops Webinar - 2020/12/15"), align = "center"),
-    language = "fr",
-    background = "linear-gradient(to top, #d5d4d0 0%, #d5d4d0 1%, #eeeeec 31%, #efeeec 75%, #e9e9e7 100%);",
-    enable_admin = TRUE)  
-} else {
+# if(!dev){
+#   secure_app(
+#     dashboardPage(
+#       header,
+#       sidebar,
+#       body), 
+#     tags_top = tags$img(src = "img/logoDS.png", width = 200),
+#     tags_bottom = tags$div(tags$p("MLops Webinar - 2020/12/15"), align = "center"),
+#     language = "fr",
+#     background = "linear-gradient(to top, #d5d4d0 0%, #d5d4d0 1%, #eeeeec 31%, #efeeec 75%, #e9e9e7 100%);",
+#     enable_admin = TRUE)  
+# } else {
   dashboardPage(
     header,
     sidebar,
     body)
-}
+# }
