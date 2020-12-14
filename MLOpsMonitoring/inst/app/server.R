@@ -51,5 +51,6 @@ shinyServer(function(input, output, session) {
   source("src/server/modelperf_server.R", local = T)
   source("src/server/driftscore_server.R", local = T)
   source("src/server/scoresdistrib_server.R", local = T)
+  source("src/server/synthese_server.R", local = T)
 
 })

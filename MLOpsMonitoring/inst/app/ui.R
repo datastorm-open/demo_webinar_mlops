@@ -6,6 +6,7 @@ sidebar <- dashboardSidebar(
   # )
   sidebarMenu(id = "sidebar",
               # menuItem("Suivi des ventes", tabName = "features", icon = icon("cart-arrow-down")),
+              menuItem("Synthèse", tabName = "synthese", icon=icon("tachometer-alt")),
               menuItem("Stabilité des inputs", tabName = "stabinputs", icon = icon("chart-line"), 
                        menuItem("Indicateurs univariés", 
                                 tabName = "features", icon = icon("cart-arrow-down")), 
@@ -38,13 +39,20 @@ body <- dashboardBody(
                   "Observation du monitoring en date du :",
                   min = as.Date("2010-09-01","%Y-%m-%d"),
                   max = as.Date("2012-01-01","%Y-%m-%d"),
-                  value=as.Date("2010-11-27"),
-                  timeFormat="%Y-%m-%d", width="100%")
+                  value=as.Date("2010-11-01"),
+                  step=30,
+                  timeFormat="%b %Y", width="100%")
+      # sliderTextInput(
+      #   inputId = "t", label = "Observation du monitoring en date du :", 
+      #   choices = list_dates_format, selected = list_dates_format[3], width = "100%",
+      #   grid=TRUE
+      # )
   ),
   
   div(style="position:relative; top:-20px;padding-left:15px;padding-right:15px;overflow-y:scroll;height:calc(100vh - 175px);",
       br(),
       tabItems(
+        tabItem(tabName = "synthese", source("src/ui/synthese_ui.R", local = T)$value),
         tabItem(tabName = "features", source("src/ui/features_ui.R", local = T)$value),
         tabItem(tabName = "modelperf", source("src/ui/modelperf_ui.R", local = T)$value),
         tabItem(tabName = "driftscore", source("src/ui/driftscore_ui.R", local = T)$value),

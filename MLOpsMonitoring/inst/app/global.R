@@ -46,3 +46,12 @@ for(TARGET_start in seq.Date(from=as.Date("2010-08-01", origin="1970-01-01"), to
 features = setdiff(colnames(features_train), c("X", "Customer.ID", "VAR_REP", "MONTH", "YEAR"))
 # is_similar = distrib_comparison(features_train, features_batch, features, verbose=F)
 
+# Data raw
+data_raw <- MLOpsMonitoring::import_dataset("/home/ngirard/Webinaire_MLOPS/data/uk-retailer-ii.xlsx")
+
+
+# Dates slider:
+min_date = as.Date("2010-09-01","%Y-%m-%d")
+max_date = as.Date("2012-01-01","%Y-%m-%d")
+list_dates <- seq.Date(min_date, max_date, by="month")
+list_dates_format <- unlist(lapply(list_dates, function(x) format(x, "%b %Y")))
