@@ -36,6 +36,13 @@ predictions <- as.data.table(read.csv("/home/mmasson/data/mlops-wbr/save_output_
 predictions[,"HAVING_WRONG"] = (predictions$PRED>=.5)*(1-predictions$ACTUAL) + predictions$ACTUAL*(1-(predictions$PRED>=.5))
 predictions[, X := NULL]
 
+change_point = c()
+for(sep in as.Date(scores$END)){
+  change_point = c(change_point, predictions[changepoint::cpt.var(predictions[START<as.Date(sep)]$HAVING_WRONG)@cpts[1], START])
+}
+scores[["RUPT_EST"]] = change_point
+
+
 features_train = as.data.table(read.csv(paste0("/home/mmasson/data/mlops-wbr/save_features_train.csv")))
 features_batch = list()
 for(TARGET_start in seq.Date(from=as.Date("2010-08-01", origin="1970-01-01"), to=as.Date("2011-12-31", origin="1970-01-01"), by="month")){

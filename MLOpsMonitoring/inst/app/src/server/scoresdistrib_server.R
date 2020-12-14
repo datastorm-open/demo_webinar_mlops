@@ -53,3 +53,8 @@ output$qqplot_scores <- renderAmCharts({
   amLines(chart,y=unname(dist_bef), type="l", col="black") 
 })
 
+output$log_rupt_date <- renderDT({
+  out = scores[END<as.Date(input$t), .("Date d'estimation"=END, "Date de rupture"=RUPT_EST)]
+  setorder(out, -"Date d'estimation")
+  out
+})
