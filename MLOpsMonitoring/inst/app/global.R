@@ -32,7 +32,8 @@ scores$END = as.POSIXct.Date(as.Date(scores$END))
 
 # Importance des variables (drift score)
 drift_imp <- as.data.table(read.csv("../data/save_output_drift_imp_1210.csv"))
-
+drift_imp[, START := as.Date(START)]
+drift_imp[, END := as.Date(END)]
 
 # Predictions
 predictions <- as.data.table(read.csv("../data/save_output_predictions_1210.csv"))
