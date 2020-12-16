@@ -16,4 +16,15 @@ Imports:
     mccr,
     ROCR,
     openxlsx,
-    lubridate
+    lubridate,
+    DT,
+    MLmetrics,
+    changepoint,
+    rAmCharts,
+    shiny,
+    shinycssloaders,
+    shinydashboard,
+    shinyjs,
+    stringr,
+    xgboost,
+    Metrics

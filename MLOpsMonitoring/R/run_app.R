@@ -2,16 +2,10 @@
 #'
 #' @description Run App
 #'
+#' @param host \code{character}. See \code{\link{shinyAppDir}} (options).
+#' @param port \code{integer}. See \code{\link{shinyAppDir}} (options)..
+#'
 #' @import shiny
-#' @import shinyjs
-#' @import shinydashboard
-#' @import shinycssloaders
-#' @import data.table
-#' @import openxlsx
-#' @import rAmCharts
-#' @import MLmetrics
-#' @import changepoint
-#' @import DT
 #'
 #' @export 
 run_app <- function(host = "0.0.0.0", port = 3838) {

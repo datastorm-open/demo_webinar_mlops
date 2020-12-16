@@ -2,9 +2,11 @@
 #'
 #' @param actual : vector, actual values (target)
 #' @param pred : vector, predicted probabilities 
+#'
 #' @return a value
-#' 
 #' @export
+#' 
+#' @import ROCR
 #' 
 auc <- function(actual, pred){
   pred_ROCR <- ROCR::prediction(pred, actual)
@@ -19,10 +21,12 @@ auc <- function(actual, pred){
 #'
 #' @param X_train : data.table, train data set
 #' @param X_test : data.table, test data set
-
+#'
 #' @return list of performance indicators (of drift model)
-#' 
 #' @export
+#' 
+#' @import mccr
+#' @importFrom caret trainControl train
 #' 
 drift_score <- function(X_train, X_test){
   X_train_copy <- copy(X_train)

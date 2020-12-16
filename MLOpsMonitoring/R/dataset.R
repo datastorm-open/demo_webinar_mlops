@@ -41,8 +41,7 @@
 #' 
 #' @return a data.table object
 #'
-#' @import data.table
-#' @import openxlsx
+#' @import data.table openxlsx
 #' @export
 #'
 #'
@@ -129,7 +128,7 @@ create_var_reponse_montant <- function(data, start_rep="2011-10-01", end_rep="20
 #' @return a data.table object
 #'
 #' @import data.table
-#' @import lubridate
+#' @importFrom lubridate day
 #' @export
 #'
 #'
@@ -269,8 +268,7 @@ create_agg_freq_cncl <- function(dt){
 #' 
 #' @return a data.table object
 #'
-#' @import data.table
-#' @import stringr
+#' @import data.table stringr
 #' @export
 #'
 #'

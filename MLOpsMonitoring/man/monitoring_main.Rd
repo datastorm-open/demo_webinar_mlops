@@ -4,18 +4,9 @@
 \alias{monitoring_main}
 \title{A wrapper that run model for each testing period, computes metrics (auc, accuracy, kappa, drift_auc, ...)}
 \usage{
-monitoring_main(
-  data,
-  X_train,
-  start,
-  end,
-  model,
-  kind_target = "factor",
-  kind_agregates = "cumulative",
-  depth_agregats = c("M-6"),
-  delay_update = "month",
-  date_format = "\%Y-\%m-\%d"
-)
+monitoring_main(data, X_train, start, end, model, kind_target = "factor",
+  kind_agregates = "cumulative", depth_agregats = c("M-6"),
+  delay_update = "month", date_format = "\%Y-\%m-\%d")
 }
 \arguments{
 \item{data}{: TODO}

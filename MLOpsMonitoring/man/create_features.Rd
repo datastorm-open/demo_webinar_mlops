@@ -4,14 +4,9 @@
 \alias{create_features}
 \title{Compute features on a rolling windows}
 \usage{
-create_features(
-  data,
-  from = as.Date("2010/03/01"),
-  to = as.Date("2011/12/01"),
-  by = "month",
-  windows = c("M-1", "M-2", "M-3"),
-  kind = "lag"
-)
+create_features(data, from = as.Date("2010/03/01"),
+  to = as.Date("2011/12/01"), by = "month", windows = c("M-1", "M-2",
+  "M-3"), kind = "lag")
 }
 \arguments{
 \item{data}{: \code{data.table}. Complete dataset.}
