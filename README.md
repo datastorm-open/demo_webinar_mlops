@@ -20,7 +20,7 @@ bash build.sh
 docker build . -t datastorm_wbnr_mlops
 
 # Step 4 : Run Docker instance
-docker run datastorm_wbnr_mlops
+docker run -d -p 3838:3838 datastorm_wbnr_mlops
 ```
 
 ## Resources
