@@ -1,6 +1,6 @@
 scores_predictions_before <- reactive({
   date_input <- input$t
-  day(date_input) <- 1
+  lubridate::day(date_input) <- 1
   pred_before <- predictions[START < date_input, PRED]
   pred_before
 })
@@ -8,7 +8,7 @@ scores_predictions_before <- reactive({
 
 scores_predictions_batch <- reactive({
   date_input <- input$t
-  day(date_input) <- 1
+  lubridate::day(date_input) <- 1
   pred_batch <- predictions[START == date_input, PRED]
   pred_batch
 })

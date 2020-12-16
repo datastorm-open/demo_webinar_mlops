@@ -10,6 +10,8 @@ require(rAmCharts)
 require(MLmetrics)
 require(changepoint)
 require(DT)
+require(lubridate)
+require(Metrics)
 
 dev = TRUE
 
@@ -30,12 +32,12 @@ scores$END = as.POSIXct.Date(as.Date(scores$END))
 
 # Importance des variables (drift score)
 drift_imp <- as.data.table(read.csv("../data/save_output_drift_imp_1210.csv"))
-drift_imp[, X := NULL]
 
 # Predictions
 predictions <- as.data.table(read.csv("../data/save_output_predictions_1210.csv"))
+predictions[, START := as.Date(START)]
+predictions[, END := as.Date(END)]
 predictions[,"HAVING_WRONG"] = (predictions$PRED>=.5)*(1-predictions$ACTUAL) + predictions$ACTUAL*(1-(predictions$PRED>=.5))
-predictions[, X := NULL]
 
 change_point = c()
 for(sep in as.Date(scores$END)){
