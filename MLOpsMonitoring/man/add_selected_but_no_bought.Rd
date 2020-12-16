@@ -4,19 +4,9 @@
 \alias{add_selected_but_no_bought}
 \title{add_selected_but_no_bought}
 \usage{
-add_selected_but_no_bought(
-  data,
-  from,
-  to,
-  by,
-  min_customer = 500,
-  max_customer = 1000,
-  odd_new_customer = 5,
-  mu_sku = 30,
-  sigma_sku = 20,
-  mu_qtty = 30,
-  sigma_qtty = 20
-)
+add_selected_but_no_bought(data, from, to, by, min_customer = 500,
+  max_customer = 1000, odd_new_customer = 5, mu_sku = 30,
+  sigma_sku = 20, mu_qtty = 30, sigma_qtty = 20)
 }
 \arguments{
 \item{data}{: a dataset in which we will add fake lines}

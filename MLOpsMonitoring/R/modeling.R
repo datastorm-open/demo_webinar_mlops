@@ -8,13 +8,18 @@
 #' @return a list of a RF Object, AUC, predictions
 #'
 #' @import data.table
-#' @import caret
+#' @importFrom caret trainControl train
+#' @importFrom Metrics rmse mae
 #' @export
 #'
 #'
 #' @examples 
 #' \dontrun{
-#' agg_4trim <- create_features_on_period(data, "2011-05-01", "2011-05-30", c("T-1", "T-2", "T-3", "T-4"), kind="lag")
+#' agg_4trim <- create_features_on_period(data, 
+#'                                        "2011-05-01", 
+#'                                        "2011-05-30", 
+#'                                        c("T-1", "T-2", "T-3", "T-4"), 
+#'                                        kind="lag")
 #' # Distribution of VAR_REP 
 #' agg_4trim[,.N/nrow(agg_4trim),VAR_REP]
 #' # Train RF
@@ -75,8 +80,7 @@ train_rf <- function(agg, print_rf=TRUE, seed=28, rep_factor=TRUE){
 #' 
 #' @return a list of a XGBoost Object, AUC, predictions
 #'
-#' @import data.table
-#' @import xgboost
+#' @import data.table xgboost
 #' @export
 #'
 #'
@@ -130,9 +134,9 @@ train_xgboost <- function(agg){
 #' @param threshold : fixed value of threshold (needed if best==FALSE)
 #' 
 #' @return a list of a RF Object, AUC, predictions
-#'
 #' @export
 #'
+#' @import ROCR
 #'
 #' @examples 
 #' \dontrun{
@@ -171,9 +175,10 @@ accuracy <- function(actual, pred,  best=FALSE, threshold=0.5){
 #' @param date_format : default \%Y-\%m-\%d
 #'
 #' @return a list of a data.table with scores, and a list of data.table corresponding to each features for each months
-#'
-#' @import data.table
 #' @export
+#' 
+#' @import data.table
+#' @importFrom Metrics rmse mae
 #'
 #' @examples 
 #' \dontrun{
@@ -272,6 +277,8 @@ monitoring_main <- function(data,
 #' @return a new dataset
 #'
 #' @export
+#' 
+#' @import data.table
 #'
 #' @examples 
 #' \dontrun{

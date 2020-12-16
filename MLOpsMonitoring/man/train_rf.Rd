@@ -23,7 +23,11 @@ Train a RandomForest model. Compute AUC.
 }
 \examples{
 \dontrun{
-agg_4trim <- create_features_on_period(data, "2011-05-01", "2011-05-30", c("T-1", "T-2", "T-3", "T-4"), kind="lag")
+agg_4trim <- create_features_on_period(data, 
+                                       "2011-05-01", 
+                                       "2011-05-30", 
+                                       c("T-1", "T-2", "T-3", "T-4"), 
+                                       kind="lag")
 # Distribution of VAR_REP 
 agg_4trim[,.N/nrow(agg_4trim),VAR_REP]
 # Train RF

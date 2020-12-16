@@ -4,11 +4,8 @@
 \alias{create_var_reponse_montant}
 \title{Create response variable : amount of products purchased in the targeted month.}
 \usage{
-create_var_reponse_montant(
-  data,
-  start_rep = "2011-10-01",
-  end_rep = "2011-10-31"
-)
+create_var_reponse_montant(data, start_rep = "2011-10-01",
+  end_rep = "2011-10-31")
 }
 \arguments{
 \item{data}{: \code{data.table}. A subset of retailer II dataset.}

@@ -4,7 +4,8 @@
 \alias{import_dataset}
 \title{Import dataset}
 \usage{
-import_dataset(path = "/home/mmasson/data/mlops-wbr/uk-retailer-ii.xlsx")
+
+  import_dataset(path = "/home/mmasson/data/mlops-wbr/uk-retailer-ii.xlsx")
 }
 \arguments{
 \item{path}{: \code{character}. Path to xlsx file}

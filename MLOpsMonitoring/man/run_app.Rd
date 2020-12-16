@@ -6,6 +6,11 @@
 \usage{
 run_app(host = "0.0.0.0", port = 3838)
 }
+\arguments{
+\item{host}{\code{character}. See \code{\link{shinyAppDir}} (options).}
+
+\item{port}{\code{integer}. See \code{\link{shinyAppDir}} (options)..}
+}
 \description{
 Run App
 }

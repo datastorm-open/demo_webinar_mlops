@@ -5,7 +5,8 @@
 \title{Create response variable : 0 if customer did not buy anything in targeted month, 1 if the it did.
 Response variable does not consider invoices PANIERXXXX. Those lines are not real orders.}
 \usage{
-create_var_reponse(data, start_rep = "2011-10-01", end_rep = "2011-10-31")
+create_var_reponse(data, start_rep = "2011-10-01",
+  end_rep = "2011-10-31")
 }
 \arguments{
 \item{data}{: \code{data.table}. A subset of retailer II dataset.}

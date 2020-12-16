@@ -5,7 +5,8 @@
 \title{Drift Score : model detecting drift between 
 train and test data sets}
 \usage{
-drift_futur(X_train, start = "2011-01-01", end = "2011-12-31", windows, kind)
+drift_futur(X_train, start = "2011-01-01", end = "2011-12-31", windows,
+  kind)
 }
 \arguments{
 \item{X_train}{: data.table, train data set}
