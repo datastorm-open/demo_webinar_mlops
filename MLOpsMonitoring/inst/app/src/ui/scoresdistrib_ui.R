@@ -13,7 +13,7 @@ fluidPage(
                infoBoxOutput("rmse_diag", width = 12),
                amChartsOutput("qqplot_scores", height = "300px", width="500px"), 
                align="center"),
-        , height = 475),
+        height = 475),
     box(shinycssloaders::withSpinner(amChartsOutput("density_scores")), 
         title = "Comparaison des densités des scores", height = 475, width=12)
   )
